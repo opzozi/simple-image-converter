@@ -1,0 +1,32 @@
+# Development files
+node_modules/
+package.json
+package-lock.json
+*.log
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build artifacts
+*.crx
+*.pem
+*.zip
+
+# Documentation (optional - remove from releases)
+STORE.md
+QUICK_START.md
+RELEASE_CHECKLIST.md
+SUMMARY.md
+TODO_BEFORE_PUBLISH.txt
+
+# Internal planning (private)
+ROADMAP.md

@@ -1,0 +1,55 @@
+{
+  "extensionName": {
+    "message": "Simple Image Converter",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Convert and save any image (WebP, AVIF, JPG) as PNG with a right-click",
+    "description": "Extension description"
+  },
+  "contextMenuTitle": {
+    "message": "Save Image as PNG",
+    "description": "Context menu item title"
+  },
+  "popupTitle": {
+    "message": "Simple Image Converter",
+    "description": "Popup title"
+  },
+  "popupDescription": {
+    "message": "Right-click on any image and select \"Save Image as PNG\" to convert and download it.",
+    "description": "Popup description"
+  },
+  "popupFeatures": {
+    "message": "Features:",
+    "description": "Features section title"
+  },
+  "featureConvert": {
+    "message": "Convert WebP, AVIF, JPG to PNG",
+    "description": "Feature 1"
+  },
+  "featureQuality": {
+    "message": "Lossless conversion",
+    "description": "Feature 2"
+  },
+  "featurePrivacy": {
+    "message": "100% offline, no data collection",
+    "description": "Feature 3"
+  },
+  "donateTitle": {
+    "message": "Support Development",
+    "description": "Donation section title"
+  },
+  "donateDescription": {
+    "message": "If you find this extension useful, consider supporting its development:",
+    "description": "Donation description"
+  },
+  "donateButton": {
+    "message": "Support via PayPal",
+    "description": "Donate button text"
+  },
+  "version": {
+    "message": "Version",
+    "description": "Version label"
+  }
+}
+

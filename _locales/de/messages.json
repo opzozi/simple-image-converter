@@ -1,0 +1,55 @@
+{
+  "extensionName": {
+    "message": "Simple Image Converter",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Konvertieren und speichern Sie jedes Bild (WebP, AVIF, JPG) als PNG mit einem Rechtsklick",
+    "description": "Extension description"
+  },
+  "contextMenuTitle": {
+    "message": "Bild als PNG speichern",
+    "description": "Context menu item title"
+  },
+  "popupTitle": {
+    "message": "Simple Image Converter",
+    "description": "Popup title"
+  },
+  "popupDescription": {
+    "message": "Klicken Sie mit der rechten Maustaste auf ein beliebiges Bild und wählen Sie \"Bild als PNG speichern\", um es zu konvertieren und herunterzuladen.",
+    "description": "Popup description"
+  },
+  "popupFeatures": {
+    "message": "Funktionen:",
+    "description": "Features section title"
+  },
+  "featureConvert": {
+    "message": "WebP, AVIF, JPG in PNG konvertieren",
+    "description": "Feature 1"
+  },
+  "featureQuality": {
+    "message": "Verlustfreie Konvertierung",
+    "description": "Feature 2"
+  },
+  "featurePrivacy": {
+    "message": "100% offline, keine Datenerfassung",
+    "description": "Feature 3"
+  },
+  "donateTitle": {
+    "message": "Entwicklung unterstützen",
+    "description": "Donation section title"
+  },
+  "donateDescription": {
+    "message": "Wenn Sie diese Erweiterung nützlich finden, unterstützen Sie bitte ihre Entwicklung:",
+    "description": "Donation description"
+  },
+  "donateButton": {
+    "message": "Über PayPal unterstützen",
+    "description": "Donate button text"
+  },
+  "version": {
+    "message": "Version",
+    "description": "Version label"
+  }
+}
+
