@@ -41,8 +41,7 @@ $filesToInclude = @(
 
 $dirsToInclude = @(
     "_locales",
-    "icons",
-    "images"
+    "icons"
 )
 
 Write-Host "Creating release package..." -ForegroundColor Yellow
