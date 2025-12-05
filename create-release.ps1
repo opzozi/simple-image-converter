@@ -1,5 +1,5 @@
 # Simple Image Converter - Release Package Creator
-# This script creates a clean ZIP file ready for Chrome Web Store submission
+# Creates a clean ZIP file ready for Chrome Web Store submission
 
 $ErrorActionPreference = "Stop"
 
@@ -16,10 +16,10 @@ Write-Host ""
 
 # Check if output file already exists
 if (Test-Path $packageName) {
-    Write-Host "⚠️  Package file already exists: $packageName" -ForegroundColor Yellow
+    Write-Host "WARNING: Package file already exists: $packageName" -ForegroundColor Yellow
     $response = Read-Host "Overwrite? (y/n)"
     if ($response -ne "y") {
-        Write-Host "❌ Release cancelled." -ForegroundColor Red
+        Write-Host "Release cancelled." -ForegroundColor Red
         exit
     }
     Remove-Item $packageName
@@ -41,40 +41,41 @@ $filesToInclude = @(
 
 $dirsToInclude = @(
     "_locales",
-    "icons"
+    "icons",
+    "images"
 )
 
-Write-Host "📦 Creating release package..." -ForegroundColor Yellow
+Write-Host "Creating release package..." -ForegroundColor Yellow
 Write-Host ""
 
 # Verify all required files exist
 $allFilesExist = $true
 foreach ($file in $filesToInclude) {
     if (Test-Path $file) {
-        Write-Host "✅ $file" -ForegroundColor Green
+        Write-Host "[OK] $file" -ForegroundColor Green
     } else {
-        Write-Host "❌ Missing: $file" -ForegroundColor Red
+        Write-Host "[MISSING] $file" -ForegroundColor Red
         $allFilesExist = $false
     }
 }
 
 foreach ($dir in $dirsToInclude) {
     if (Test-Path $dir) {
-        Write-Host "✅ $dir/" -ForegroundColor Green
+        Write-Host "[OK] $dir/" -ForegroundColor Green
     } else {
-        Write-Host "❌ Missing: $dir/" -ForegroundColor Red
+        Write-Host "[MISSING] $dir/" -ForegroundColor Red
         $allFilesExist = $false
     }
 }
 
 if (-not $allFilesExist) {
     Write-Host ""
-    Write-Host "❌ Some required files are missing. Cannot create package." -ForegroundColor Red
+    Write-Host "ERROR: Some required files are missing. Cannot create package." -ForegroundColor Red
     exit 1
 }
 
 Write-Host ""
-Write-Host "📝 Creating ZIP archive..." -ForegroundColor Yellow
+Write-Host "Creating ZIP archive..." -ForegroundColor Yellow
 
 # Create temporary directory for packaging
 $tempDir = "temp-release-$version"
@@ -101,18 +102,15 @@ Remove-Item -Recurse -Force $tempDir
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "✅ Package created successfully!" -ForegroundColor Green
+Write-Host "Package created successfully!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "📦 File: $packageName" -ForegroundColor White
+Write-Host "File: $packageName" -ForegroundColor White
 $fileSize = (Get-Item $packageName).Length / 1KB
-Write-Host "📊 Size: $([math]::Round($fileSize, 2)) KB" -ForegroundColor White
+Write-Host "Size: $([math]::Round($fileSize, 2)) KB" -ForegroundColor White
 Write-Host ""
-Write-Host "🚀 Next steps:" -ForegroundColor Yellow
-Write-Host "  1. Review RELEASE_CHECKLIST.md" -ForegroundColor White
-Write-Host "  2. Test the extension one final time" -ForegroundColor White
-Write-Host "  3. Go to Chrome Web Store Developer Dashboard" -ForegroundColor White
-Write-Host "  4. Upload $packageName" -ForegroundColor White
+Write-Host "Next steps:" -ForegroundColor Yellow
+Write-Host "  1. Test the extension one final time" -ForegroundColor White
+Write-Host "  2. Go to Chrome Web Store Developer Dashboard" -ForegroundColor White
+Write-Host "  3. Upload $packageName" -ForegroundColor White
 Write-Host ""
-Write-Host "Good luck! 🎉" -ForegroundColor Green
-

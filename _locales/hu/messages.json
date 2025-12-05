@@ -40,7 +40,7 @@
     "description": "Donation section title"
   },
   "donateDescription": {
-    "message": "Ha hasznosnak találod ezt a bővítményt, támogasd a fejlesztést:",
+    "message": "Tetszik a bővítmény? Támogasd a fejlesztést:",
     "description": "Donation description"
   },
   "donateButton": {

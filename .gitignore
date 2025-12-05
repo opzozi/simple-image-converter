@@ -27,6 +27,14 @@ QUICK_START.md
 RELEASE_CHECKLIST.md
 SUMMARY.md
 TODO_BEFORE_PUBLISH.txt
+CHROME_STORE_GUIDE.md
+SCREENSHOTS_INFO.md
+STORE_DESCRIPTION.txt
 
 # Internal planning (private)
 ROADMAP.md
+
+# Screenshots and temp files
+images/
+images_resized/
+resize-screenshots.ps1
