@@ -4,16 +4,17 @@ Chrome böngésző bővítmény, amely bármilyen weboldali képet PNG formátum
 
 ## Funkciók
 
-- **Univerzális Konverzió** — WebP, AVIF, JPG és más formátumok automatikus PNG-vé alakítása
-- **Gyors és Hatékony** — Modern Offscreen API használata optimális teljesítményért
-- **Biztonság Első** — 100% offline konverzió, nincs adatgyűjtés, külső szerverek nélkül
+- **Univerzális Konverzió** — WebP, AVIF, JPG és más formátumok PNG-vé alakítása
+- **Vágólapra másolás** — Jobb klikk → „Kép másolása PNG-ként”
+- **Gyors és Hatékony** — Offscreen API használata optimális teljesítményért
+- **Biztonság Első** — 100% offline, nincs adatgyűjtés
 - **Többnyelvű** — Angol, német és magyar nyelv támogatása
-- **Könnyű** — Minimális erőforrás használat (~5-10 MB RAM)
+- **Könnyű** — ~5-10 MB RAM használat
 
 ## Telepítés
 
 ### Chrome Web Store-ból
-1. Látogasd meg a Chrome Web Store oldalt
+1. Látogasd meg a [Chrome Web Store oldalt](https://chrome.google.com/webstore/detail/clinbfiephmemllcffpddoabnknkaeki)
 2. Kattints a "Hozzáadás a Chrome-hoz" gombra
 3. Erősítsd meg a telepítést
 
@@ -28,9 +29,9 @@ Chrome böngésző bővítmény, amely bármilyen weboldali képet PNG formátum
 
 1. Navigálj bármilyen weboldalra, ahol képek vannak
 2. Kattints jobb gombbal bármely képre
-3. Válaszd a **"Kép mentése PNG-ként"** opciót a menüből
-4. Válaszd ki, hova szeretnéd menteni a fájlt
-5. Kész! A képed PNG formátumban lett elmentve
+3. Válaszd a **"Kép mentése PNG-ként"** opciót a letöltéshez, vagy a **"Kép másolása PNG-ként"** opciót a vágólaphoz
+4. Mentésnél válaszd ki a helyet; másolásnál illeszd be, ahol kell
+5. Kész! A kép PNG-ként elérhető
 
 ## Technikai Részletek
 

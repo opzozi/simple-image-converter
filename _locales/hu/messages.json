@@ -11,12 +11,16 @@
     "message": "Kép mentése PNG-ként",
     "description": "Context menu item title"
   },
+  "contextMenuCopyTitle": {
+    "message": "Kép másolása PNG-ként",
+    "description": "Context menu copy item title"
+  },
   "popupTitle": {
     "message": "Simple Image Converter",
     "description": "Popup title"
   },
   "popupDescription": {
-    "message": "Kattintson jobb gombbal bármely képre, és válassza a \"Kép mentése PNG-ként\" lehetőséget a konvertáláshoz és letöltéshez.",
+    "message": "Kattints jobb gombbal bármely képre, válaszd a \"Kép mentése PNG-ként\" opciót a letöltéshez, vagy a \"Kép másolása PNG-ként\" opciót a vágólapra másoláshoz.",
     "description": "Popup description"
   },
   "popupFeatures": {
@@ -27,13 +31,25 @@
     "message": "WebP, AVIF, JPG konvertálása PNG-vé",
     "description": "Feature 1"
   },
+  "featureCopy": {
+    "message": "Képek másolása PNG-ként a vágólapra",
+    "description": "Feature 2"
+  },
   "featureQuality": {
     "message": "Veszteségmentes konverzió",
-    "description": "Feature 2"
+    "description": "Feature 3"
   },
   "featurePrivacy": {
     "message": "100% offline, nincs adatgyűjtés",
-    "description": "Feature 3"
+    "description": "Feature 4"
+  },
+  "copySuccessToast": {
+    "message": "PNG a vágólapon",
+    "description": "Toast shown on successful copy"
+  },
+  "copyErrorToast": {
+    "message": "Másolás sikertelen",
+    "description": "Toast shown on failed copy"
   },
   "donateTitle": {
     "message": "Támogasd a fejlesztést",

@@ -11,12 +11,16 @@
     "message": "Save Image as PNG",
     "description": "Context menu item title"
   },
+  "contextMenuCopyTitle": {
+    "message": "Copy Image as PNG",
+    "description": "Context menu copy item title"
+  },
   "popupTitle": {
     "message": "Simple Image Converter",
     "description": "Popup title"
   },
   "popupDescription": {
-    "message": "Right-click on any image and select \"Save Image as PNG\" to convert and download it.",
+    "message": "Right-click any image and pick \"Save Image as PNG\" to download or \"Copy Image as PNG\" to send it to your clipboard.",
     "description": "Popup description"
   },
   "popupFeatures": {
@@ -27,13 +31,25 @@
     "message": "Convert WebP, AVIF, JPG to PNG",
     "description": "Feature 1"
   },
+  "featureCopy": {
+    "message": "Copy images as PNG to clipboard",
+    "description": "Feature 2"
+  },
   "featureQuality": {
     "message": "Lossless conversion",
-    "description": "Feature 2"
+    "description": "Feature 3"
   },
   "featurePrivacy": {
     "message": "100% offline, no data collection",
-    "description": "Feature 3"
+    "description": "Feature 4"
+  },
+  "copySuccessToast": {
+    "message": "Copied PNG to clipboard",
+    "description": "Toast shown on successful copy"
+  },
+  "copyErrorToast": {
+    "message": "Copy failed",
+    "description": "Toast shown on failed copy"
   },
   "donateTitle": {
     "message": "Support Development",

@@ -11,12 +11,16 @@
     "message": "Bild als PNG speichern",
     "description": "Context menu item title"
   },
+  "contextMenuCopyTitle": {
+    "message": "Bild als PNG kopieren",
+    "description": "Context menu copy item title"
+  },
   "popupTitle": {
     "message": "Simple Image Converter",
     "description": "Popup title"
   },
   "popupDescription": {
-    "message": "Klicken Sie mit der rechten Maustaste auf ein beliebiges Bild und wählen Sie \"Bild als PNG speichern\", um es zu konvertieren und herunterzuladen.",
+    "message": "Rechtsklick auf ein Bild, dann \"Bild als PNG speichern\" zum Download oder \"Bild als PNG kopieren\" für die Zwischenablage.",
     "description": "Popup description"
   },
   "popupFeatures": {
@@ -27,13 +31,25 @@
     "message": "WebP, AVIF, JPG in PNG konvertieren",
     "description": "Feature 1"
   },
+  "featureCopy": {
+    "message": "Bilder als PNG in die Zwischenablage kopieren",
+    "description": "Feature 2"
+  },
   "featureQuality": {
     "message": "Verlustfreie Konvertierung",
-    "description": "Feature 2"
+    "description": "Feature 3"
   },
   "featurePrivacy": {
     "message": "100% offline, keine Datenerfassung",
-    "description": "Feature 3"
+    "description": "Feature 4"
+  },
+  "copySuccessToast": {
+    "message": "PNG in Zwischenablage",
+    "description": "Toast shown on successful copy"
+  },
+  "copyErrorToast": {
+    "message": "Kopieren fehlgeschlagen",
+    "description": "Toast shown on failed copy"
   },
   "donateTitle": {
     "message": "Entwicklung unterstützen",

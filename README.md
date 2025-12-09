@@ -8,16 +8,17 @@ A lightweight Chrome extension that converts and saves any image (WebP, AVIF, JP
 
 ## Features
 
-- **Universal Conversion** — Automatically converts WebP, AVIF, JPG, and other formats to PNG
-- **Fast & Efficient** — Uses modern Offscreen API for optimal performance
-- **Privacy First** — 100% offline conversion, no data collection, no external servers
-- **Multi-language** — Supports English, German, and Hungarian
-- **Lightweight** — Minimal resource usage (~5-10 MB RAM)
+- **Universal Conversion** — Convert WebP, AVIF, JPG, and other formats to PNG
+- **Copy to Clipboard** — Right-click → “Copy Image as PNG”
+- **Fast & Efficient** — Uses Offscreen API for optimal performance
+- **Privacy First** — 100% offline, no data collection
+- **Multi-language** — English, German, Hungarian
+- **Lightweight** — ~5-10 MB RAM usage
 
 ## Installation
 
 ### From Chrome Web Store
-1. Visit the [Chrome Web Store page](#) *(coming soon)*
+1. Visit the [Chrome Web Store page](https://chrome.google.com/webstore/detail/clinbfiephmemllcffpddoabnknkaeki)
 2. Click "Add to Chrome"
 3. Confirm the installation
 
@@ -32,9 +33,9 @@ A lightweight Chrome extension that converts and saves any image (WebP, AVIF, JP
 
 1. Navigate to any webpage with images
 2. Right-click on any image
-3. Select **"Save Image as PNG"** from the context menu
-4. Choose where to save the file
-5. Done! Your image is converted and saved as PNG
+3. Choose **"Save Image as PNG"** to download, or **"Copy Image as PNG"** to put the PNG in your clipboard
+4. If you saved, pick the location; if you copied, paste where you need it
+5. Done! The image is ready as PNG
 
 ## Technical Details
 
