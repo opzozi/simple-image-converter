@@ -4,15 +4,15 @@
     "description": "Extension name"
   },
   "extensionDescription": {
-    "message": "Convert and save any image (WebP, AVIF, JPG) as PNG with a right-click",
+    "message": "Convert, save or copy images with a right-click, in the format you choose.",
     "description": "Extension description"
   },
   "contextMenuTitle": {
-    "message": "Save Image as PNG",
+    "message": "Save image",
     "description": "Context menu item title"
   },
   "contextMenuCopyTitle": {
-    "message": "Copy Image as PNG",
+    "message": "Copy image",
     "description": "Context menu copy item title"
   },
   "popupTitle": {
@@ -20,7 +20,7 @@
     "description": "Popup title"
   },
   "popupDescription": {
-    "message": "Right-click any image and pick \"Save Image as PNG\" to download or \"Copy Image as PNG\" to send it to your clipboard.",
+    "message": "Right-click an image to save it or copy it to the clipboard. Format and quality are configurable in Settings.",
     "description": "Popup description"
   },
   "popupFeatures": {
@@ -28,15 +28,15 @@
     "description": "Features section title"
   },
   "featureConvert": {
-    "message": "Convert WebP, AVIF, JPG to PNG",
+    "message": "Convert images (WebP, AVIF, JPG, PNG, etc.) to PNG or JPEG",
     "description": "Feature 1"
   },
   "featureCopy": {
-    "message": "Copy images as PNG to clipboard",
+    "message": "Copy images to clipboard (configurable format)",
     "description": "Feature 2"
   },
   "featureQuality": {
-    "message": "Lossless conversion",
+    "message": "Smart filenames using website name (not CDN)",
     "description": "Feature 3"
   },
   "featurePrivacy": {
@@ -44,12 +44,116 @@
     "description": "Feature 4"
   },
   "copySuccessToast": {
-    "message": "Copied PNG to clipboard",
+    "message": "Image copied",
     "description": "Toast shown on successful copy"
   },
   "copyErrorToast": {
     "message": "Copy failed",
     "description": "Toast shown on failed copy"
+  },
+  "saveSuccessToast": {
+    "message": "Saved image",
+    "description": "Toast shown on successful save"
+  },
+  "saveCancelledToast": {
+    "message": "Save cancelled",
+    "description": "Toast shown when user cancels save dialog"
+  },
+  "saveErrorToast": {
+    "message": "Save failed",
+    "description": "Toast shown on save error"
+  },
+  "optionsTitle": {
+    "message": "Settings",
+    "description": "Options page title"
+  },
+  "optionsDescription": {
+    "message": "Configure how the extension behaves.",
+    "description": "Options page description"
+  },
+  "optionsSectionAppearance": {
+    "message": "Appearance",
+    "description": "Options appearance section title"
+  },
+  "optionsDarkMode": {
+    "message": "Dark mode",
+    "description": "Label for dark mode toggle"
+  },
+  "optionsSectionBehavior": {
+    "message": "Behavior",
+    "description": "Options section title"
+  },
+  "optionsToastEnabled": {
+    "message": "Show toasts for copy/save",
+    "description": "Label for toast toggle"
+  },
+  "optionsToastDuration": {
+    "message": "Toast duration (ms)",
+    "description": "Label for toast duration input"
+  },
+  "optionsFocusWait": {
+    "message": "Focus wait before clipboard (ms)",
+    "description": "Label for focus wait input"
+  },
+  "optionsSaveAs": {
+    "message": "Always ask where to save (Save As dialog)",
+    "description": "Label for saveAs prompt toggle"
+  },
+  "optionsFetchCredentials": {
+    "message": "Use credentials when fetching images (may help on some sites)",
+    "description": "Label for fetch credentials toggle"
+  },
+  "optionsSaveButton": {
+    "message": "Save",
+    "description": "Save button text"
+  },
+  "optionsResetButton": {
+    "message": "Reset to defaults",
+    "description": "Reset settings button text"
+  },
+  "optionsSaved": {
+    "message": "Saved.",
+    "description": "Status after saving"
+  },
+  "optionsResetDone": {
+    "message": "Defaults restored.",
+    "description": "Status after reset"
+  },
+  "optionsFormat": {
+    "message": "Output format",
+    "description": "Label for output format select"
+  },
+  "optionsJpegQuality": {
+    "message": "JPEG quality (%)",
+    "description": "Label for jpeg quality"
+  },
+  "optionsResizeMax": {
+    "message": "Max dimension (px, 0 = original)",
+    "description": "Label for resize max input"
+  },
+  "optionsFilenamePattern": {
+    "message": "Filename pattern",
+    "description": "Label for filename pattern"
+  },
+  "optionsFormatHint": {
+    "message": "PNG = lossless, JPEG = smaller but lossy.",
+    "description": "Helper text for format choice"
+  },
+  "optionsJpegHint": {
+    "message": "70-90% is usually enough. Higher = larger files.",
+    "description": "Helper text for jpeg quality"
+  },
+  "optionsResizeHint": {
+    "message": "Max longer edge in pixels. 0 keeps original size.",
+    "description": "Helper text for resize"
+  },
+  "optionsPatternHint": {
+    "message": "Use {site}, {name}, {date}, {time}, {ext}. Example: site-image-2025-01-01.png",
+    "description": "Helper text for filename pattern"
+  },
+  "optionsLink": {
+    "message": "Settings",
+    "description": "Link text to open options"
   },
   "donateTitle": {
     "message": "Support Development",
@@ -66,6 +170,10 @@
   "version": {
     "message": "Version",
     "description": "Version label"
+  },
+  "rateExtension": {
+    "message": "Rate",
+    "description": "Rate extension link text"
   }
 }
 

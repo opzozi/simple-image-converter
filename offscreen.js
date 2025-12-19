@@ -1,6 +1,11 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'CONVERT_IMAGE') {
-    convertImageToPNG(message.imageUrl)
+    convertImage(message.imageUrl, {
+      fetchWithCredentials: message.fetchWithCredentials,
+      format: message.format,
+      jpegQuality: message.jpegQuality,
+      resizeMax: message.resizeMax
+    })
       .then(result => {
         sendResponse({ success: true, dataUrl: result.dataUrl });
       })
@@ -13,18 +18,32 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-async function convertImageToPNG(imageUrl) {
+async function convertImage(imageUrl, opts = {}) {
+  const fetchWithCredentials = opts.fetchWithCredentials !== false;
+  const format = opts.format === 'jpeg' ? 'jpeg' : 'png';
+  const jpegQuality = typeof opts.jpegQuality === 'number' ? opts.jpegQuality : 0.92;
+  const resizeMax = typeof opts.resizeMax === 'number' ? opts.resizeMax : 0;
+
   return new Promise((resolve, reject) => {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    fetchImageAsBlob(imageUrl)
+    fetchImageAsBlob(imageUrl, fetchWithCredentials)
       .then(blob => blobToImage(blob))
       .then(img => {
         try {
-          canvas.width = img.naturalWidth || img.width;
-          canvas.height = img.naturalHeight || img.height;
+          let targetWidth = img.naturalWidth || img.width;
+          let targetHeight = img.naturalHeight || img.height;
 
-          ctx.drawImage(img, 0, 0);
+          if (resizeMax > 0 && (targetWidth > resizeMax || targetHeight > resizeMax)) {
+            const scale = Math.min(resizeMax / targetWidth, resizeMax / targetHeight);
+            targetWidth = Math.round(targetWidth * scale);
+            targetHeight = Math.round(targetHeight * scale);
+          }
+
+          canvas.width = targetWidth;
+          canvas.height = targetHeight;
+
+          ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
 
           canvas.toBlob(blob => {
             if (!blob) {
@@ -32,10 +51,11 @@ async function convertImageToPNG(imageUrl) {
               return;
             }
 
-            const dataUrl = canvas.toDataURL('image/png');
+            const mime = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+            const dataUrl = canvas.toDataURL(mime, format === 'jpeg' ? jpegQuality : undefined);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             resolve({ dataUrl, blob });
-          }, 'image/png');
+          }, format === 'jpeg' ? 'image/jpeg' : 'image/png', format === 'jpeg' ? jpegQuality : undefined);
         } catch (error) {
           reject(new Error('Failed to convert image: ' + error.message));
         }
@@ -44,9 +64,12 @@ async function convertImageToPNG(imageUrl) {
   });
 }
 
-async function fetchImageAsBlob(imageUrl) {
+async function fetchImageAsBlob(imageUrl, fetchWithCredentials = true) {
   try {
-    const res = await fetch(imageUrl, { mode: 'cors', credentials: 'include' });
+    const res = await fetch(imageUrl, {
+      mode: 'cors',
+      credentials: fetchWithCredentials ? 'include' : 'omit'
+    });
     if (!res.ok) {
       throw new Error(`Failed to fetch image: ${res.status}`);
     }

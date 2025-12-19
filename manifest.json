@@ -1,14 +1,16 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
   "permissions": [
     "contextMenus",
     "downloads",
     "offscreen",
-    "clipboardWrite"
+    "clipboardWrite",
+    "storage",
+    "scripting"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -16,6 +18,7 @@
   "background": {
     "service_worker": "background.js"
   },
+  "options_page": "options.html",
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

@@ -20,6 +20,9 @@ desktop.ini
 *.crx
 *.pem
 *.zip
+dist/
+temp-release-*/
+simple-image-converter-*.zip
 
 # Documentation (optional - remove from releases)
 STORE.md
@@ -30,6 +33,7 @@ TODO_BEFORE_PUBLISH.txt
 CHROME_STORE_GUIDE.md
 SCREENSHOTS_INFO.md
 STORE_DESCRIPTION.txt
+permission_justifications.txt
 
 # Internal planning (private)
 ROADMAP.md

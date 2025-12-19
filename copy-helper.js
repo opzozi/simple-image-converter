@@ -1,26 +1,40 @@
-// Handles image copy to clipboard in the page context (has user gesture/focus)
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'COPY_IMAGE_DATA' && message.dataUrl) {
-    writeDataUrlToClipboard(message.dataUrl)
+    const opts = normalizeOptions(message.options);
+    writeDataUrlToClipboard(message.dataUrl, opts)
       .then(() => {
-        showToast(t('copySuccessToast', 'PNG copied'), false);
+        if (opts.toastEnabled) {
+          showToast(t('copySuccessToast', 'PNG copied'), false, opts.toastDurationMs);
+        }
         sendResponse({ success: true });
       })
       .catch(err => {
         console.error('[SIC] Copy (content) failed:', err);
-        showToast(t('copyErrorToast', 'Copy failed'), true);
+        if (opts.toastEnabled) {
+          showToast(t('copyErrorToast', 'Copy failed'), true, opts.toastDurationMs);
+        }
         sendResponse({ success: false, error: err.message });
       });
     return true;
   }
+  if (message.type === 'SHOW_TOAST') {
+    const opts = normalizeOptions(message.options);
+    if (opts.toastEnabled) {
+      const text = message.message || t('copySuccessToast', 'Saved.');
+      showToast(text, !message.success, opts.toastDurationMs);
+    }
+    sendResponse({ ok: true });
+    return true;
+  }
 });
 
-async function writeDataUrlToClipboard(dataUrl) {
-  await ensureDocumentFocus();
+async function writeDataUrlToClipboard(dataUrl, opts) {
+  await ensureDocumentFocus(opts.focusWaitMs);
   if (!navigator.clipboard || typeof navigator.clipboard.write !== 'function') {
     throw new Error('Clipboard API not available');
   }
-  const pngBlob = dataUrlToBlob(dataUrl);
+  const blob = dataUrlToBlob(dataUrl);
+  const pngBlob = (blob.type && blob.type !== 'image/png') ? await convertBlobToPng(blob) : blob;
   await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
 }
 
@@ -41,16 +55,14 @@ function dataUrlToBlob(dataUrl) {
   return new Blob([ab], { type: mime });
 }
 
-async function ensureDocumentFocus() {
-  if (document.hasFocus()) {
-    return;
+async function ensureDocumentFocus(waitMs) {
+  if (!document.hasFocus()) {
+    window.focus();
+    await new Promise(resolve => setTimeout(resolve, waitMs));
   }
-  // Attempt to focus and give the event loop a tick before writing
-  window.focus();
-  await new Promise(resolve => setTimeout(resolve, 50));
 }
 
-function showToast(text, isError) {
+function showToast(text, isError, durationMs) {
   const existing = document.getElementById('sic-toast');
   if (existing) {
     existing.remove();
@@ -70,7 +82,7 @@ function showToast(text, isError) {
   toast.style.boxShadow = '0 4px 10px rgba(0,0,0,0.18)';
   toast.style.fontFamily = 'Arial, sans-serif';
   document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2000);
+  setTimeout(() => toast.remove(), durationMs);
 }
 
 function t(key, fallback) {
@@ -79,6 +91,34 @@ function t(key, fallback) {
     if (msg) return msg;
   }
   return fallback;
+}
+
+function normalizeOptions(raw = {}) {
+  const defaults = {
+    toastEnabled: true,
+    toastDurationMs: 2000,
+    focusWaitMs: 50,
+  };
+  return {
+    toastEnabled: raw.toastEnabled ?? defaults.toastEnabled,
+    toastDurationMs: clamp(raw.toastDurationMs, 500, 10000) ?? defaults.toastDurationMs,
+    focusWaitMs: clamp(raw.focusWaitMs, 0, 500) ?? defaults.focusWaitMs,
+  };
+}
+
+function clamp(val, min, max) {
+  if (typeof val !== 'number' || Number.isNaN(val)) return min;
+  return Math.min(Math.max(val, min), max);
+}
+
+async function convertBlobToPng(blob) {
+  const bmp = await createImageBitmap(blob);
+  const canvas = new OffscreenCanvas(bmp.width, bmp.height);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bmp, 0, 0);
+  const pngBlob = await canvas.convertToBlob({ type: 'image/png' });
+  bmp.close();
+  return pngBlob;
 }
 
 

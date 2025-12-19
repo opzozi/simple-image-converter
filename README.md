@@ -8,8 +8,10 @@ A lightweight Chrome extension that converts and saves any image (WebP, AVIF, JP
 
 ## Features
 
-- **Universal Conversion** — Convert WebP, AVIF, JPG, and other formats to PNG
-- **Copy to Clipboard** — Right-click → “Copy Image as PNG”
+- **Universal Conversion** — Convert WebP, AVIF, JPG, and other formats to PNG or JPEG
+- **Copy to Clipboard** — Right-click → "Copy Image as PNG/JPEG"
+- **Smart Filenames** — Automatically uses website name (not CDN) in filenames
+- **Customizable Settings** — Modern UI with dark mode support
 - **Fast & Efficient** — Uses Offscreen API for optimal performance
 - **Privacy First** — 100% offline, no data collection
 - **Multi-language** — English, German, Hungarian
@@ -33,9 +35,11 @@ A lightweight Chrome extension that converts and saves any image (WebP, AVIF, JP
 
 1. Navigate to any webpage with images
 2. Right-click on any image
-3. Choose **"Save Image as PNG"** to download, or **"Copy Image as PNG"** to put the PNG in your clipboard
+3. Choose **"Save Image as PNG/JPEG"** to download, or **"Copy Image as PNG/JPEG"** to put it in your clipboard
 4. If you saved, pick the location; if you copied, paste where you need it
-5. Done! The image is ready as PNG
+5. Done! The image is converted and ready
+
+**Customize Settings**: Click the extension icon → Settings to configure output format, quality, filename patterns, and more.
 
 ## Technical Details
 
@@ -94,16 +98,20 @@ simple-image-converter/
 ├── background.js           # Service Worker
 ├── offscreen.html          # Offscreen document for Canvas
 ├── offscreen.js            # Image conversion logic
-├── popup.html              # Extension popup UI
-├── popup.css               # Popup styles
-├── popup.js                # Popup functionality
-├── _locales/               # Internationalization
-│   ├── en/
-│   ├── de/
-│   └── hu/
+├── popup.html/js/css       # Extension popup UI
+├── options.html/js/css     # Settings page
+├── copy-helper.js          # Content script for clipboard
+├── _locales/               # Internationalization (en/de/hu)
 ├── icons/                  # Extension icons
+├── CHANGELOG.md            # Version history
+├── FEATURES.md             # Detailed feature documentation
 └── PRIVACY.md              # Privacy policy
 ```
+
+### Documentation
+
+- **[FEATURES.md](FEATURES.md)** — Complete feature documentation
+- **[CHANGELOG.md](CHANGELOG.md)** — Version history and changes
 
 ### Contributing
 

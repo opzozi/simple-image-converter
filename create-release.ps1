@@ -34,9 +34,12 @@ $filesToInclude = @(
     "popup.html",
     "popup.css",
     "popup.js",
+    "options.html",
+    "options.css",
+    "options.js",
+    "copy-helper.js",
     "LICENSE",
-    "PRIVACY.md",
-    "README.md"
+    "PRIVACY.md"
 )
 
 $dirsToInclude = @(

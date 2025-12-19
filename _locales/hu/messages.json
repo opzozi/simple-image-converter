@@ -4,15 +4,15 @@
     "description": "Extension name"
   },
   "extensionDescription": {
-    "message": "Konvertáljon és mentsen el bármilyen képet (WebP, AVIF, JPG) PNG formátumban jobb kattintással",
+    "message": "Konvertálj, ments vagy másolj képet jobb kattintással, a választott formátumban.",
     "description": "Extension description"
   },
   "contextMenuTitle": {
-    "message": "Kép mentése PNG-ként",
+    "message": "Kép mentése",
     "description": "Context menu item title"
   },
   "contextMenuCopyTitle": {
-    "message": "Kép másolása PNG-ként",
+    "message": "Kép másolása",
     "description": "Context menu copy item title"
   },
   "popupTitle": {
@@ -20,7 +20,7 @@
     "description": "Popup title"
   },
   "popupDescription": {
-    "message": "Kattints jobb gombbal bármely képre, válaszd a \"Kép mentése PNG-ként\" opciót a letöltéshez, vagy a \"Kép másolása PNG-ként\" opciót a vágólapra másoláshoz.",
+    "message": "Kattints jobb gombbal egy képre, mentsd le vagy másold a vágólapra. A formátum és minőség a Beállításoknál állítható.",
     "description": "Popup description"
   },
   "popupFeatures": {
@@ -28,15 +28,15 @@
     "description": "Features section title"
   },
   "featureConvert": {
-    "message": "WebP, AVIF, JPG konvertálása PNG-vé",
+    "message": "Képek konvertálása (WebP, AVIF, JPG, PNG, stb.) PNG vagy JPEG formátumba",
     "description": "Feature 1"
   },
   "featureCopy": {
-    "message": "Képek másolása PNG-ként a vágólapra",
+    "message": "Képek másolása vágólapra (választható formátum)",
     "description": "Feature 2"
   },
   "featureQuality": {
-    "message": "Veszteségmentes konverzió",
+    "message": "Okos fájlnevek weboldal neve alapján (nem CDN)",
     "description": "Feature 3"
   },
   "featurePrivacy": {
@@ -44,12 +44,116 @@
     "description": "Feature 4"
   },
   "copySuccessToast": {
-    "message": "PNG a vágólapon",
+    "message": "Kép a vágólapon",
     "description": "Toast shown on successful copy"
   },
   "copyErrorToast": {
     "message": "Másolás sikertelen",
     "description": "Toast shown on failed copy"
+  },
+  "saveSuccessToast": {
+    "message": "Kép elmentve",
+    "description": "Toast shown on successful save"
+  },
+  "saveCancelledToast": {
+    "message": "Mentés megszakítva",
+    "description": "Toast shown when user cancels save dialog"
+  },
+  "saveErrorToast": {
+    "message": "Mentés sikertelen",
+    "description": "Toast shown on save error"
+  },
+  "optionsTitle": {
+    "message": "Beállítások",
+    "description": "Options page title"
+  },
+  "optionsDescription": {
+    "message": "Állítsd be, hogyan működjön a bővítmény.",
+    "description": "Options page description"
+  },
+  "optionsSectionAppearance": {
+    "message": "Megjelenés",
+    "description": "Options appearance section title"
+  },
+  "optionsDarkMode": {
+    "message": "Sötét mód",
+    "description": "Label for dark mode toggle"
+  },
+  "optionsSectionBehavior": {
+    "message": "Működés",
+    "description": "Options section title"
+  },
+  "optionsToastEnabled": {
+    "message": "Toast értesítések másolás/mentés esetén",
+    "description": "Label for toast toggle"
+  },
+  "optionsToastDuration": {
+    "message": "Toast időtartam (ms)",
+    "description": "Label for toast duration input"
+  },
+  "optionsFocusWait": {
+    "message": "Fókusz-várakozás vágólap előtt (ms)",
+    "description": "Label for focus wait input"
+  },
+  "optionsSaveAs": {
+    "message": "Mentésnél mindig kérdezze meg a helyet (Mentés másként)",
+    "description": "Label for saveAs prompt toggle"
+  },
+  "optionsFetchCredentials": {
+    "message": "Hitelesítő adatok használata kép letöltéskor (bizonyos oldalakon segíthet)",
+    "description": "Label for fetch credentials toggle"
+  },
+  "optionsSaveButton": {
+    "message": "Mentés",
+    "description": "Save button text"
+  },
+  "optionsResetButton": {
+    "message": "Alapbeállítások visszaállítása",
+    "description": "Reset settings button text"
+  },
+  "optionsSaved": {
+    "message": "Elmentve.",
+    "description": "Status after saving"
+  },
+  "optionsResetDone": {
+    "message": "Alapértelmezés visszaállítva.",
+    "description": "Status after reset"
+  },
+  "optionsFormat": {
+    "message": "Kimeneti formátum",
+    "description": "Label for output format select"
+  },
+  "optionsJpegQuality": {
+    "message": "JPEG minőség (%)",
+    "description": "Label for jpeg quality"
+  },
+  "optionsResizeMax": {
+    "message": "Max. méret (px, 0 = eredeti)",
+    "description": "Label for resize max input"
+  },
+  "optionsFilenamePattern": {
+    "message": "Fájlnév minta",
+    "description": "Label for filename pattern"
+  },
+  "optionsFormatHint": {
+    "message": "PNG veszteségmentes, a JPEG kisebb, de veszteséges.",
+    "description": "Helper text for format choice"
+  },
+  "optionsJpegHint": {
+    "message": "70-90% általában elég. Magasabb érték = nagyobb fájl.",
+    "description": "Helper text for jpeg quality"
+  },
+  "optionsResizeHint": {
+    "message": "Hosszabbik oldal maximuma pixelben. 0 = eredeti méret.",
+    "description": "Helper text for resize"
+  },
+  "optionsPatternHint": {
+    "message": "Használd ezeket: {site}, {name}, {date}, {time}, {ext}. Példa: oldal-image-2025-01-01.png",
+    "description": "Helper text for filename pattern"
+  },
+  "optionsLink": {
+    "message": "Beállítások",
+    "description": "Link text to open options"
   },
   "donateTitle": {
     "message": "Támogasd a fejlesztést",
@@ -66,6 +170,10 @@
   "version": {
     "message": "Verzió",
     "description": "Version label"
+  },
+  "rateExtension": {
+    "message": "Értékelés",
+    "description": "Rate extension link text"
   }
 }
 

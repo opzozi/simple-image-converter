@@ -4,15 +4,15 @@
     "description": "Extension name"
   },
   "extensionDescription": {
-    "message": "Konvertieren und speichern Sie jedes Bild (WebP, AVIF, JPG) als PNG mit einem Rechtsklick",
+    "message": "Bilder per Rechtsklick konvertieren, speichern oder kopieren – im gewünschten Format.",
     "description": "Extension description"
   },
   "contextMenuTitle": {
-    "message": "Bild als PNG speichern",
+    "message": "Bild speichern",
     "description": "Context menu item title"
   },
   "contextMenuCopyTitle": {
-    "message": "Bild als PNG kopieren",
+    "message": "Bild kopieren",
     "description": "Context menu copy item title"
   },
   "popupTitle": {
@@ -20,7 +20,7 @@
     "description": "Popup title"
   },
   "popupDescription": {
-    "message": "Rechtsklick auf ein Bild, dann \"Bild als PNG speichern\" zum Download oder \"Bild als PNG kopieren\" für die Zwischenablage.",
+    "message": "Rechtsklick auf ein Bild zum Speichern oder Kopieren in die Zwischenablage. Format und Qualität stellst du in den Einstellungen ein.",
     "description": "Popup description"
   },
   "popupFeatures": {
@@ -28,15 +28,15 @@
     "description": "Features section title"
   },
   "featureConvert": {
-    "message": "WebP, AVIF, JPG in PNG konvertieren",
+    "message": "Bilder konvertieren (WebP, AVIF, JPG, PNG usw.) zu PNG oder JPEG",
     "description": "Feature 1"
   },
   "featureCopy": {
-    "message": "Bilder als PNG in die Zwischenablage kopieren",
+    "message": "Bilder in die Zwischenablage kopieren (Format wählbar)",
     "description": "Feature 2"
   },
   "featureQuality": {
-    "message": "Verlustfreie Konvertierung",
+    "message": "Intelligente Dateinamen mit Website-Name (nicht CDN)",
     "description": "Feature 3"
   },
   "featurePrivacy": {
@@ -44,12 +44,116 @@
     "description": "Feature 4"
   },
   "copySuccessToast": {
-    "message": "PNG in Zwischenablage",
+    "message": "Bild kopiert",
     "description": "Toast shown on successful copy"
   },
   "copyErrorToast": {
     "message": "Kopieren fehlgeschlagen",
     "description": "Toast shown on failed copy"
+  },
+  "saveSuccessToast": {
+    "message": "Bild gespeichert",
+    "description": "Toast shown on successful save"
+  },
+  "saveCancelledToast": {
+    "message": "Speichern abgebrochen",
+    "description": "Toast shown when user cancels save dialog"
+  },
+  "saveErrorToast": {
+    "message": "Speichern fehlgeschlagen",
+    "description": "Toast shown on save error"
+  },
+  "optionsTitle": {
+    "message": "Einstellungen",
+    "description": "Options page title"
+  },
+  "optionsDescription": {
+    "message": "Konfiguriere das Verhalten der Erweiterung.",
+    "description": "Options page description"
+  },
+  "optionsSectionAppearance": {
+    "message": "Erscheinungsbild",
+    "description": "Options appearance section title"
+  },
+  "optionsDarkMode": {
+    "message": "Dunkler Modus",
+    "description": "Label for dark mode toggle"
+  },
+  "optionsSectionBehavior": {
+    "message": "Verhalten",
+    "description": "Options section title"
+  },
+  "optionsToastEnabled": {
+    "message": "Toasts für Kopieren/Speichern anzeigen",
+    "description": "Label for toast toggle"
+  },
+  "optionsToastDuration": {
+    "message": "Toast-Dauer (ms)",
+    "description": "Label for toast duration input"
+  },
+  "optionsFocusWait": {
+    "message": "Fokus-Wartezeit vor Zwischenablage (ms)",
+    "description": "Label for focus wait input"
+  },
+  "optionsSaveAs": {
+    "message": "Immer nach Speicherort fragen (\"Speichern unter\"-Dialog)",
+    "description": "Label for saveAs prompt toggle"
+  },
+  "optionsFetchCredentials": {
+    "message": "Anmeldeinformationen beim Laden von Bildern verwenden (hilft auf manchen Seiten)",
+    "description": "Label for fetch credentials toggle"
+  },
+  "optionsSaveButton": {
+    "message": "Speichern",
+    "description": "Save button text"
+  },
+  "optionsResetButton": {
+    "message": "Auf Standard zurücksetzen",
+    "description": "Reset settings button text"
+  },
+  "optionsSaved": {
+    "message": "Gespeichert.",
+    "description": "Status after saving"
+  },
+  "optionsResetDone": {
+    "message": "Standards wiederhergestellt.",
+    "description": "Status after reset"
+  },
+  "optionsFormat": {
+    "message": "Ausgabeformat",
+    "description": "Label for output format select"
+  },
+  "optionsJpegQuality": {
+    "message": "JPEG-Qualität (%)",
+    "description": "Label for jpeg quality"
+  },
+  "optionsResizeMax": {
+    "message": "Max. Abmessung (px, 0 = original)",
+    "description": "Label for resize max input"
+  },
+  "optionsFilenamePattern": {
+    "message": "Dateinamensmuster",
+    "description": "Label for filename pattern"
+  },
+  "optionsFormatHint": {
+    "message": "PNG ist verlustfrei, JPEG kleiner aber mit Verlust.",
+    "description": "Helper text for format choice"
+  },
+  "optionsJpegHint": {
+    "message": "70-90% reicht meist. Höher = größere Dateien.",
+    "description": "Helper text for jpeg quality"
+  },
+  "optionsResizeHint": {
+    "message": "Maximale lange Kante in Pixeln. 0 behält Originalgröße.",
+    "description": "Helper text for resize"
+  },
+  "optionsPatternHint": {
+    "message": "Nutze {site}, {name}, {date}, {time}, {ext}. Beispiel: seite-image-2025-01-01.png",
+    "description": "Helper text for filename pattern"
+  },
+  "optionsLink": {
+    "message": "Einstellungen",
+    "description": "Link text to open options"
   },
   "donateTitle": {
     "message": "Entwicklung unterstützen",
@@ -66,6 +170,10 @@
   "version": {
     "message": "Version",
     "description": "Version label"
+  },
+  "rateExtension": {
+    "message": "Bewerten",
+    "description": "Rate extension link text"
   }
 }
 
