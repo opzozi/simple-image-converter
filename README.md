@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 
-A lightweight Chrome extension that converts and saves any image (WebP, AVIF, JPG) as PNG with a simple right-click.
+A lightweight Chrome extension that converts and saves any image (WebP, AVIF, JPG) as PNG or JPEG with a simple right-click. Built with React and Manifest V3.
 
 ## Features
 
@@ -44,6 +44,8 @@ A lightweight Chrome extension that converts and saves any image (WebP, AVIF, JP
 ## Technical Details
 
 ### Built With
+- **React** — Modern component-based UI
+- **Vite** — Fast build tool
 - **Manifest V3** — Future-proof Chrome extension standard
 - **Service Worker** — Modern background script architecture
 - **Offscreen API** — Efficient Canvas access for image conversion
@@ -98,11 +100,14 @@ simple-image-converter/
 ├── background.js           # Service Worker
 ├── offscreen.html          # Offscreen document for Canvas
 ├── offscreen.js            # Image conversion logic
-├── popup.html/js/css       # Extension popup UI
-├── options.html/js/css     # Settings page
+├── src/                    # React source files
+│   ├── popup/              # Popup React components
+│   └── options/            # Options page React components
 ├── copy-helper.js          # Content script for clipboard
 ├── _locales/               # Internationalization (en/de/hu)
 ├── icons/                  # Extension icons
+├── package.json            # NPM dependencies
+├── vite.config.js          # Vite build configuration
 ├── CHANGELOG.md            # Version history
 ├── FEATURES.md             # Detailed feature documentation
 └── PRIVACY.md              # Privacy policy

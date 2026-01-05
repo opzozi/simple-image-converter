@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.3.0 (2026-01-05)
+- **React Migration**: Complete migration to React for all UI components
+  - Options page rebuilt with React
+  - Popup rebuilt with React and tabbed interface (Home/Settings)
+  - Modern component-based architecture for easier maintenance and future development
+- **UI Improvements**:
+  - Tabbed popup interface with Home and Settings tabs
+  - Improved dark mode persistence across tabs
+  - Localized tab names (EN/DE/HU)
+  - Professional color scheme replacing purple gradient
+- **Technical Improvements**:
+  - Vite build system for modern development workflow
+  - Better code organization and maintainability
+
 ## 1.2.0
 - **Modern Settings UI**: Complete redesign of options page with iOS-style toggles, modern form elements, and dark mode support
   - Manual dark mode toggle (in addition to system preference)
