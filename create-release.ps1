@@ -25,26 +25,32 @@ if (Test-Path $packageName) {
     Remove-Item $packageName
 }
 
-# Files and directories to include
+# Check if dist folder exists
+if (-not (Test-Path "dist")) {
+    Write-Host "ERROR: dist folder not found. Please run 'npm run build' first." -ForegroundColor Red
+    exit 1
+}
+
+# Files and directories to include from dist folder
 $filesToInclude = @(
-    "manifest.json",
-    "background.js",
-    "offscreen.html",
-    "offscreen.js",
-    "popup.html",
-    "popup.css",
-    "popup.js",
-    "options.html",
-    "options.css",
-    "options.js",
-    "copy-helper.js",
+    "dist\manifest.json",
+    "dist\background.js",
+    "dist\offscreen.html",
+    "dist\offscreen.js",
+    "dist\popup.html",
+    "dist\popup.css",
+    "dist\popup.js",
+    "dist\options.html",
+    "dist\options.css",
+    "dist\options.js",
+    "dist\copy-helper.js",
     "LICENSE",
     "PRIVACY.md"
 )
 
 $dirsToInclude = @(
-    "_locales",
-    "icons"
+    "dist\_locales",
+    "dist\icons"
 )
 
 Write-Host "Creating release package..." -ForegroundColor Yellow
@@ -53,10 +59,15 @@ Write-Host ""
 # Verify all required files exist
 $allFilesExist = $true
 foreach ($file in $filesToInclude) {
-    if (Test-Path $file) {
-        Write-Host "[OK] $file" -ForegroundColor Green
+    if ($file -like "dist\*") {
+        $checkFile = $file
     } else {
-        Write-Host "[MISSING] $file" -ForegroundColor Red
+        $checkFile = $file
+    }
+    if (Test-Path $checkFile) {
+        Write-Host "[OK] $checkFile" -ForegroundColor Green
+    } else {
+        Write-Host "[MISSING] $checkFile" -ForegroundColor Red
         $allFilesExist = $false
     }
 }
@@ -88,12 +99,25 @@ New-Item -ItemType Directory -Path $tempDir | Out-Null
 
 # Copy files
 foreach ($file in $filesToInclude) {
-    Copy-Item $file -Destination $tempDir
+    if ($file -like "dist\*") {
+        # Remove "dist\" prefix for destination
+        $destFile = $file -replace "^dist\\", ""
+        Copy-Item $file -Destination (Join-Path $tempDir $destFile)
+    } else {
+        # Files outside dist (LICENSE, PRIVACY.md)
+        Copy-Item $file -Destination $tempDir
+    }
 }
 
 # Copy directories
 foreach ($dir in $dirsToInclude) {
-    Copy-Item -Recurse $dir -Destination $tempDir
+    if ($dir -like "dist\*") {
+        # Remove "dist\" prefix for destination
+        $destDir = $dir -replace "^dist\\", ""
+        Copy-Item -Recurse $dir -Destination (Join-Path $tempDir $destDir)
+    } else {
+        Copy-Item -Recurse $dir -Destination $tempDir
+    }
 }
 
 # Create ZIP
