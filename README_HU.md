@@ -1,11 +1,11 @@
 # Simple Image Converter
 
-Chrome böngésző bővítmény, amely bármilyen weboldali képet PNG formátumba konvertál egyetlen kattintással.
+Chrome böngésző bővítmény, amely bármilyen weboldali képet PNG vagy JPEG formátumba konvertál egyetlen kattintással. React és Manifest V3 alapokon épül.
 
 ## Funkciók
 
-- **Univerzális Konverzió** — WebP, AVIF, JPG és más formátumok PNG-vé alakítása
-- **Vágólapra másolás** — Jobb klikk → „Kép másolása PNG-ként”
+- **Univerzális Konverzió** — WebP, AVIF, JPG és más formátumok PNG/JPEG formátumba alakítása
+- **Vágólapra másolás** — Jobb klikk → „Kép másolása PNG/JPEG-ként"
 - **Gyors és Hatékony** — Offscreen API használata optimális teljesítményért
 - **Biztonság Első** — 100% offline, nincs adatgyűjtés
 - **Többnyelvű** — Angol, német és magyar nyelv támogatása
@@ -37,6 +37,8 @@ Chrome böngésző bővítmény, amely bármilyen weboldali képet PNG formátum
 
 ### Technológia
 
+- **React** — Modern komponens-alapú felület
+- **Vite** — Gyors build eszköz
 - **Manifest V3** — Jövőálló Chrome bővítmény szabvány
 - **Service Worker** — Modern háttérfolyamat architektúra
 - **Offscreen API** — Hatékony Canvas hozzáférés képkonverzióhoz

@@ -1,22 +1,25 @@
+// Chrome only - use chrome API
+const browserAPI = chrome;
+
 let creating;
 
-chrome.runtime.onInstalled.addListener(async () => {
-  await chrome.contextMenus.removeAll();
+browserAPI.runtime.onInstalled.addListener(async () => {
+  await browserAPI.contextMenus.removeAll();
   
-  chrome.contextMenus.create({
+  browserAPI.contextMenus.create({
     id: 'save-image-as-png',
-    title: chrome.i18n.getMessage('contextMenuTitle'),
+    title: browserAPI.i18n.getMessage('contextMenuTitle'),
     contexts: ['image']
   });
-  chrome.contextMenus.create({
+  browserAPI.contextMenus.create({
     id: 'copy-image-as-png',
-    title: chrome.i18n.getMessage('contextMenuCopyTitle'),
+    title: browserAPI.i18n.getMessage('contextMenuCopyTitle'),
     contexts: ['image']
   });
   getSettings().then(s => updateContextMenuTitles(s.outputFormat));
 });
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+browserAPI.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'save-image-as-png') {
     const imageUrl = info.srcUrl;
     const pageUrl = tab?.url || info.pageUrl || '';
@@ -31,17 +34,17 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
-chrome.runtime.onStartup?.addListener(async () => {
+browserAPI.runtime.onStartup?.addListener(async () => {
   try {
-    await chrome.contextMenus.removeAll();
-    chrome.contextMenus.create({
+    await browserAPI.contextMenus.removeAll();
+    browserAPI.contextMenus.create({
       id: 'save-image-as-png',
-      title: chrome.i18n.getMessage('contextMenuTitle'),
+      title: browserAPI.i18n.getMessage('contextMenuTitle'),
       contexts: ['image']
     });
-    chrome.contextMenus.create({
+    browserAPI.contextMenus.create({
       id: 'copy-image-as-png',
-      title: chrome.i18n.getMessage('contextMenuCopyTitle'),
+      title: browserAPI.i18n.getMessage('contextMenuCopyTitle'),
       contexts: ['image']
     });
   } catch (err) {
@@ -51,7 +54,7 @@ chrome.runtime.onStartup?.addListener(async () => {
   updateContextMenuTitles(settings.outputFormat);
 });
 
-chrome.storage.onChanged.addListener(async (changes, area) => {
+browserAPI.storage.onChanged.addListener(async (changes, area) => {
   if (area !== 'sync' && area !== 'local') return;
   if (changes.outputFormat) {
     updateContextMenuTitles(changes.outputFormat.newValue);
@@ -71,19 +74,20 @@ const defaultSettings = {
 };
 
 async function getSettings() {
-  const stored = await chrome.storage.sync.get(Object.keys(defaultSettings));
+  const storage = browserAPI.storage.sync;
+  const stored = await storage.get(Object.keys(defaultSettings));
   return normalizeSettings({ ...defaultSettings, ...stored });
 }
 
 function updateContextMenuTitles(fmt) {
   const fmtLabel = (fmt === 'jpeg' ? 'JPEG' : fmt === 'webp' ? 'WEBP' : 'PNG');
-  const saveTitle = `${chrome.i18n.getMessage('contextMenuTitle') || 'Save image'} (${fmtLabel})`;
-  const copyTitle = `${chrome.i18n.getMessage('contextMenuCopyTitle') || 'Copy image'} (${fmtLabel})`;
+  const saveTitle = `${browserAPI.i18n.getMessage('contextMenuTitle') || 'Save image'} (${fmtLabel})`;
+  const copyTitle = `${browserAPI.i18n.getMessage('contextMenuCopyTitle') || 'Copy image'} (${fmtLabel})`;
   try {
-    chrome.contextMenus.update('save-image-as-png', { title: saveTitle });
-    chrome.contextMenus.update('copy-image-as-png', { title: copyTitle });
+    browserAPI.contextMenus.update('save-image-as-png', { title: saveTitle });
+    browserAPI.contextMenus.update('copy-image-as-png', { title: copyTitle });
   } catch (err) {
-    console.warn('[SIC] Could not update context menu titles:', err);
+    // Could not update context menu titles
   }
 }
 
@@ -107,11 +111,7 @@ function normalizeSettings(raw) {
 async function convertAndDownloadImage(imageUrl, pageUrl = '') {
   try {
     const settings = await getSettings();
-    await setupOffscreenDocument();
-    
-    const response = await chrome.runtime.sendMessage({
-      type: 'CONVERT_IMAGE',
-      imageUrl: imageUrl,
+    const response = await convertImageUniversal(imageUrl, {
       fetchWithCredentials: !!settings.fetchWithCredentials,
       format: settings.outputFormat,
       jpegQuality: settings.jpegQuality,
@@ -120,14 +120,14 @@ async function convertAndDownloadImage(imageUrl, pageUrl = '') {
     
     if (response.success) {
       const filename = getFilenameFromUrl(imageUrl, pageUrl, settings.outputFormat, settings.filenamePattern);
-      chrome.downloads.download(
+      browserAPI.downloads.download(
         {
           url: response.dataUrl,
           filename: filename,
           saveAs: !!settings.saveAsPrompt
         },
         downloadId => {
-          const dlErr = chrome.runtime.lastError;
+          const dlErr = browserAPI.runtime.lastError;
           if (dlErr) {
             if (settings.toastEnabled) {
               const isCancelled = dlErr.message && (
@@ -136,8 +136,8 @@ async function convertAndDownloadImage(imageUrl, pageUrl = '') {
                 dlErr.message.includes('canceled')
               );
               const message = isCancelled
-                ? (chrome.i18n.getMessage('saveCancelledToast') || 'Save cancelled')
-                : (chrome.i18n.getMessage('saveErrorToast') || dlErr.message || 'Download failed.');
+                ? (browserAPI.i18n.getMessage('saveCancelledToast') || 'Save cancelled')
+                : (browserAPI.i18n.getMessage('saveErrorToast') || dlErr.message || 'Download failed.');
               sendToastToActive(false, message);
             }
             return;
@@ -147,37 +147,33 @@ async function convertAndDownloadImage(imageUrl, pageUrl = '') {
           const onChanged = delta => {
             if (delta.id !== downloadId) return;
             if (delta.state && delta.state.current === 'complete') {
-              sendToastToActive(true, chrome.i18n.getMessage('saveSuccessToast') || 'Saved.', settings);
-              chrome.downloads.onChanged.removeListener(onChanged);
+              sendToastToActive(true, browserAPI.i18n.getMessage('saveSuccessToast') || 'Saved.', settings);
+              browserAPI.downloads.onChanged.removeListener(onChanged);
             } else if (delta.error && delta.error.current) {
               const errorCode = delta.error.current;
               const isCancelled = errorCode === 'USER_CANCELLED' || errorCode === 'USER_Cancelled';
               const message = isCancelled
-                ? (chrome.i18n.getMessage('saveCancelledToast') || 'Save cancelled')
-                : (chrome.i18n.getMessage('saveErrorToast') || errorCode || 'Download failed.');
+                ? (browserAPI.i18n.getMessage('saveCancelledToast') || 'Save cancelled')
+                : (browserAPI.i18n.getMessage('saveErrorToast') || errorCode || 'Download failed.');
               sendToastToActive(false, message, settings);
-              chrome.downloads.onChanged.removeListener(onChanged);
+              browserAPI.downloads.onChanged.removeListener(onChanged);
             }
           };
-          chrome.downloads.onChanged.addListener(onChanged);
+          browserAPI.downloads.onChanged.addListener(onChanged);
         }
       );
     } else {
-      console.error('Image conversion failed:', response.error);
+      // Image conversion failed
     }
   } catch (error) {
-    console.error('Error in convertAndDownloadImage:', error);
+    // Error in convertAndDownloadImage
   }
 }
 
 async function copyImageToClipboard(imageUrl, tabId) {
   try {
     const settings = await getSettings();
-    await setupOffscreenDocument();
-
-    const convertResponse = await chrome.runtime.sendMessage({
-      type: 'CONVERT_IMAGE',
-      imageUrl,
+    const convertResponse = await convertImageUniversal(imageUrl, {
       fetchWithCredentials: !!settings.fetchWithCredentials,
       format: settings.outputFormat,
       jpegQuality: settings.jpegQuality,
@@ -185,19 +181,19 @@ async function copyImageToClipboard(imageUrl, tabId) {
     });
 
     if (!convertResponse?.success || !convertResponse.dataUrl) {
-      console.error('[SIC] Copy failed: conversion error', convertResponse?.error);
+      // Copy failed: conversion error
       return;
     }
 
     const targetTabId = tabId ?? (await getActiveTabId());
     if (!targetTabId) {
-      console.error('[SIC] Copy failed: no target tab available');
+      // Copy failed: no target tab available
       return;
     }
 
     await ensureContentScript(targetTabId);
 
-    chrome.tabs.sendMessage(
+    browserAPI.tabs.sendMessage(
       targetTabId,
       {
         type: 'COPY_IMAGE_DATA',
@@ -209,33 +205,33 @@ async function copyImageToClipboard(imageUrl, tabId) {
         }
       },
       response => {
-        const err = chrome.runtime.lastError;
+        const err = browserAPI.runtime.lastError;
         if (err) {
-          console.error('[SIC] Copy failed (tabs.sendMessage):', err.message || err);
+          // Copy failed (tabs.sendMessage)
           return;
         }
         if (!response || !response.success) {
-          console.error('[SIC] Copy failed:', response?.error || 'unknown error');
+          // Copy failed
         }
       }
     );
   } catch (error) {
-    console.error('[SIC] Error in copyImageToClipboard:', error);
+    // Error in copyImageToClipboard
   }
 }
 
 async function getActiveTabId() {
-  const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const [activeTab] = await browserAPI.tabs.query({ active: true, currentWindow: true });
   return activeTab?.id;
 }
 
 async function ensureContentScript(tabId) {
   if (!tabId) return;
-  await chrome.scripting.executeScript({
+  await browserAPI.scripting.executeScript({
     target: { tabId },
     files: ['copy-helper.js']
   }).catch(err => {
-    console.warn('[SIC] Unable to inject content script:', err?.message || err);
+    // Unable to inject content script
   });
 }
 
@@ -243,15 +239,31 @@ function isHttpLike(url) {
   return typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'));
 }
 
+async function convertImageUniversal(imageUrl, opts = {}) {
+  await setupOffscreenDocument();
+  return await browserAPI.runtime.sendMessage({
+    type: 'CONVERT_IMAGE',
+    imageUrl: imageUrl,
+    fetchWithCredentials: opts.fetchWithCredentials,
+    format: opts.format,
+    jpegQuality: opts.jpegQuality,
+    resizeMax: opts.resizeMax
+  });
+}
+
 async function setupOffscreenDocument() {
-  if (await chrome.offscreen.hasDocument()) {
+  if (!browserAPI.offscreen) {
+    return;
+  }
+  
+  if (await browserAPI.offscreen.hasDocument()) {
     return;
   }
   
   if (creating) {
     await creating;
   } else {
-    creating = chrome.offscreen.createDocument({
+    creating = browserAPI.offscreen.createDocument({
       url: 'offscreen.html',
       reasons: ['BLOBS'],
       justification: 'Convert images to PNG format using Canvas API'
@@ -331,7 +343,7 @@ function getFilenameFromUrl(imageUrl, pageUrl, fmt, pattern) {
     
     return filename;
   } catch (error) {
-    console.error('Error parsing URL:', error);
+    // Error parsing URL
     return fmt === 'jpeg' ? 'image.jpg' : 'image.png';
   }
 }
@@ -354,11 +366,11 @@ function getBaseDomain(host) {
 }
 
 function sendToastToActive(success, message, options) {
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+  browserAPI.tabs.query({ active: true, currentWindow: true }, tabs => {
     const activeId = tabs?.[0]?.id;
     const activeUrl = tabs?.[0]?.url;
     if (!activeId || !isHttpLike(activeUrl)) return;
-    chrome.tabs.sendMessage(activeId, {
+    browserAPI.tabs.sendMessage(activeId, {
       type: 'SHOW_TOAST',
       success,
       message,
@@ -368,7 +380,7 @@ function sendToastToActive(success, message, options) {
         focusWaitMs: options.focusWaitMs,
       } : undefined
     }, () => {
-      const err = chrome.runtime.lastError;
+      const err = browserAPI.runtime.lastError;
       if (err) {
         return;
       }

@@ -1,0 +1,23 @@
+{
+  "name": "simple-image-converter",
+  "version": "1.3.0",
+  "description": "Chrome extension to convert WebP/AVIF/JPG images to PNG/JPEG",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "vite build && node postbuild.js && node build-extension.js",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.1.0"
+  }
+}
+

@@ -1,4 +1,34 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+const browserAPI = chrome;
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'CONVERT_IMAGE') {
+      convertImage(event.data.imageUrl, {
+        fetchWithCredentials: event.data.fetchWithCredentials,
+        format: event.data.format,
+        jpegQuality: event.data.jpegQuality,
+        resizeMax: event.data.resizeMax
+      })
+        .then(result => {
+          event.source.postMessage({
+            type: 'CONVERT_RESPONSE',
+            success: true,
+            dataUrl: result.dataUrl
+          }, '*');
+        })
+        .catch(error => {
+          // Conversion error
+          event.source.postMessage({
+            type: 'CONVERT_RESPONSE',
+            success: false,
+            error: error.message
+          }, '*');
+        });
+    }
+  });
+}
+
+browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'CONVERT_IMAGE') {
     convertImage(message.imageUrl, {
       fetchWithCredentials: message.fetchWithCredentials,

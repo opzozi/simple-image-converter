@@ -1,4 +1,6 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+const browserAPI = chrome;
+
+browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'COPY_IMAGE_DATA' && message.dataUrl) {
     const opts = normalizeOptions(message.options);
     writeDataUrlToClipboard(message.dataUrl, opts)
@@ -9,7 +11,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ success: true });
       })
       .catch(err => {
-        console.error('[SIC] Copy (content) failed:', err);
+        // Copy (content) failed
         if (opts.toastEnabled) {
           showToast(t('copyErrorToast', 'Copy failed'), true, opts.toastDurationMs);
         }
@@ -86,8 +88,8 @@ function showToast(text, isError, durationMs) {
 }
 
 function t(key, fallback) {
-  if (chrome?.i18n && typeof chrome.i18n.getMessage === 'function') {
-    const msg = chrome.i18n.getMessage(key);
+  if (browserAPI?.i18n && typeof browserAPI.i18n.getMessage === 'function') {
+    const msg = browserAPI.i18n.getMessage(key);
     if (msg) return msg;
   }
   return fallback;
