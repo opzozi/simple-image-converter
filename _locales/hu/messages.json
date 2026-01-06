@@ -72,7 +72,7 @@
     "description": "Options page description"
   },
   "optionsSectionAppearance": {
-    "message": "Megjelenés",
+    "message": "MEGJELENÉS",
     "description": "Options appearance section title"
   },
   "optionsDarkMode": {
@@ -80,8 +80,16 @@
     "description": "Label for dark mode toggle"
   },
   "optionsSectionBehavior": {
-    "message": "Működés",
+    "message": "VISELKEDÉS",
     "description": "Options section title"
+  },
+  "optionsSectionConversion": {
+    "message": "KONVERTÁLÁS",
+    "description": "Conversion section title"
+  },
+  "optionsSectionFiles": {
+    "message": "FÁJLOK",
+    "description": "Files section title"
   },
   "optionsToastEnabled": {
     "message": "Toast értesítések másolás/mentés esetén",
@@ -118,6 +126,10 @@
   "optionsResetDone": {
     "message": "Alapértelmezés visszaállítva.",
     "description": "Status after reset"
+  },
+  "optionsLoading": {
+    "message": "Betöltés...",
+    "description": "Loading text"
   },
   "optionsFormat": {
     "message": "Kimeneti formátum",
@@ -167,6 +179,14 @@
     "message": "Támogass PayPal-on",
     "description": "Donate button text"
   },
+  "donateButtonCompact": {
+    "message": "Támogatás",
+    "description": "Compact donate button text"
+  },
+  "privacyBadge": {
+    "message": "100% offline • Nincs felhő • Adataid védve",
+    "description": "Privacy badge text"
+  },
   "version": {
     "message": "Verzió",
     "description": "Version label"
@@ -182,6 +202,62 @@
   "popupTabSettings": {
     "message": "Beállítások",
     "description": "Settings tab label"
+  },
+  "quickFormatToggle": {
+    "message": "Gyors Formátumváltás",
+    "description": "Quick format toggle section title"
+  },
+  "quickFormatDescription": {
+    "message": "Azonnali váltás PNG és JPEG között",
+    "description": "Quick format toggle description"
+  },
+  "currentFormat": {
+    "message": "Jelenlegi formátum",
+    "description": "Current format label"
+  },
+  "switchFormat": {
+    "message": "Váltás",
+    "description": "Switch format button prefix"
+  },
+  "batchConvert": {
+    "message": "Kötegelt konvertálás",
+    "description": "Batch convert button text"
+  },
+  "batchComingSoon": {
+    "message": "Hamarosan elérhető: helyi fájlok konvertálása",
+    "description": "Batch feature coming soon tooltip"
+  },
+  "batchProFeature": {
+    "message": "Hamarosan elérhető a Pro verzióban. Részletek: sic.opzozidev.com",
+    "description": "Batch feature pro version tooltip"
+  },
+  "proDetails": {
+    "message": "Részletek a Pro verzióról →",
+    "description": "Link text to pro version details"
+  },
+  "comingSoon": {
+    "message": "Hamarosan",
+    "description": "Coming soon badge text"
+  },
+  "helpTitle": {
+    "message": "Súgó",
+    "description": "Help section title"
+  },
+  "dismissHelp": {
+    "message": "Bezárás",
+    "description": "Dismiss help button"
+  },
+  "showHelp": {
+    "message": "Utasítások megjelenítése",
+    "description": "Show help button"
+  },
+  "outputFormatLabel": {
+    "message": "KIMENETI FORMÁTUM",
+    "description": "Output format label above toggle"
+  },
+  "formatHint": {
+    "message": "Jobb klikk a mentéshez",
+    "description": "Hint text below format toggle"
   }
 }
 

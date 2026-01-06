@@ -4,3 +4,9 @@ dist/
 .DS_Store
 *.local
 PROJECT_STATUS.md
+temp-release-*/
+*.zip
+*.crx
+*.pem
+.env
+.env.local

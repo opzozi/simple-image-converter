@@ -72,7 +72,7 @@
     "description": "Options page description"
   },
   "optionsSectionAppearance": {
-    "message": "Appearance",
+    "message": "APPEARANCE",
     "description": "Options appearance section title"
   },
   "optionsDarkMode": {
@@ -80,8 +80,16 @@
     "description": "Label for dark mode toggle"
   },
   "optionsSectionBehavior": {
-    "message": "Behavior",
+    "message": "BEHAVIOR",
     "description": "Options section title"
+  },
+  "optionsSectionConversion": {
+    "message": "CONVERSION",
+    "description": "Conversion section title"
+  },
+  "optionsSectionFiles": {
+    "message": "FILES",
+    "description": "Files section title"
   },
   "optionsToastEnabled": {
     "message": "Show toasts for copy/save",
@@ -118,6 +126,10 @@
   "optionsResetDone": {
     "message": "Defaults restored.",
     "description": "Status after reset"
+  },
+  "optionsLoading": {
+    "message": "Loading...",
+    "description": "Loading text"
   },
   "optionsFormat": {
     "message": "Output format",
@@ -167,6 +179,14 @@
     "message": "Support via PayPal",
     "description": "Donate button text"
   },
+  "donateButtonCompact": {
+    "message": "Support",
+    "description": "Compact donate button text"
+  },
+  "privacyBadge": {
+    "message": "100% offline • No cloud • Your data protected",
+    "description": "Privacy badge text"
+  },
   "version": {
     "message": "Version",
     "description": "Version label"
@@ -182,6 +202,62 @@
   "popupTabSettings": {
     "message": "Settings",
     "description": "Settings tab label"
+  },
+  "quickFormatToggle": {
+    "message": "Quick Format Toggle",
+    "description": "Quick format toggle section title"
+  },
+  "quickFormatDescription": {
+    "message": "Switch between PNG and JPEG instantly",
+    "description": "Quick format toggle description"
+  },
+  "currentFormat": {
+    "message": "Current format",
+    "description": "Current format label"
+  },
+  "switchFormat": {
+    "message": "Switch to",
+    "description": "Switch format button prefix"
+  },
+  "batchConvert": {
+    "message": "Batch Convert",
+    "description": "Batch convert button text"
+  },
+  "batchComingSoon": {
+    "message": "Coming soon: convert local files",
+    "description": "Batch feature coming soon tooltip"
+  },
+  "batchProFeature": {
+    "message": "Coming soon in Pro version. Details: sic.opzozidev.com",
+    "description": "Batch feature pro version tooltip"
+  },
+  "proDetails": {
+    "message": "Pro version details →",
+    "description": "Link text to pro version details"
+  },
+  "comingSoon": {
+    "message": "Soon",
+    "description": "Coming soon badge text"
+  },
+  "helpTitle": {
+    "message": "Help",
+    "description": "Help section title"
+  },
+  "dismissHelp": {
+    "message": "Dismiss",
+    "description": "Dismiss help button"
+  },
+  "showHelp": {
+    "message": "Show instructions",
+    "description": "Show help button"
+  },
+  "outputFormatLabel": {
+    "message": "OUTPUT FORMAT",
+    "description": "Output format label above toggle"
+  },
+  "formatHint": {
+    "message": "Right click to save",
+    "description": "Hint text below format toggle"
   }
 }
 

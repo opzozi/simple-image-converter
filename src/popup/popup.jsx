@@ -12,6 +12,9 @@ function PopupApp() {
   const [version, setVersion] = useState('');
   const [activeTab, setActiveTab] = useState('home');
   const [darkMode, setDarkMode] = useState(false);
+  const [currentFormat, setCurrentFormat] = useState('png');
+  const [showHelp, setShowHelp] = useState(false);
+  const [dismissedHelp, setDismissedHelp] = useState(false);
 
   function applyDarkMode(enabled) {
     if (enabled) {
@@ -27,10 +30,34 @@ function PopupApp() {
 
   async function loadDarkMode() {
     const stored = await storage.get(['darkMode']);
-    const systemDark = getSystemDarkMode();
-    const currentDarkMode = stored.darkMode !== undefined ? stored.darkMode : systemDark;
+    // Default to dark mode if not set
+    const currentDarkMode = stored.darkMode !== undefined ? stored.darkMode : true;
     setDarkMode(currentDarkMode);
     applyDarkMode(currentDarkMode);
+  }
+
+  async function loadCurrentFormat() {
+    const stored = await storage.get(['outputFormat']);
+    const format = stored.outputFormat === 'jpeg' ? 'jpeg' : 'png';
+    setCurrentFormat(format);
+  }
+
+  async function loadHelpState() {
+    const stored = await storage.get(['dismissedHelp']);
+    setDismissedHelp(stored.dismissedHelp === true);
+  }
+
+  async function dismissHelp() {
+    await storage.set({ dismissedHelp: true });
+    setDismissedHelp(true);
+  }
+
+  async function toggleFormat() {
+    const newFormat = currentFormat === 'png' ? 'jpeg' : 'png';
+    await storage.set({ outputFormat: newFormat });
+    setCurrentFormat(newFormat);
+    // Notify background script to update context menu
+    chrome.runtime.sendMessage({ type: 'FORMAT_CHANGED', format: newFormat });
   }
 
   useEffect(() => {
@@ -38,12 +65,18 @@ function PopupApp() {
     setVersion(manifest.version);
     
     loadDarkMode();
+    loadCurrentFormat();
+    loadHelpState();
 
     const handleStorageChange = (changes, areaName) => {
       if (changes.darkMode) {
         const newDarkMode = changes.darkMode.newValue !== undefined ? changes.darkMode.newValue : getSystemDarkMode();
         setDarkMode(newDarkMode);
         applyDarkMode(newDarkMode);
+      }
+      if (changes.outputFormat) {
+        const format = changes.outputFormat.newValue === 'jpeg' ? 'jpeg' : 'png';
+        setCurrentFormat(format);
       }
     };
     
@@ -90,61 +123,77 @@ function PopupApp() {
       <div className="popup-content">
         {activeTab === 'home' && (
           <div className="home-tab">
-            <p className="description">{i18n.getMessage('popupDescription')}</p>
-            
-            <div className="features">
-              <h3>{i18n.getMessage('popupFeatures')}</h3>
-              <ul>
-                <li>{i18n.getMessage('featureConvert')}</li>
-                <li>{i18n.getMessage('featureCopy')}</li>
-                <li>{i18n.getMessage('featureQuality')}</li>
-                <li>{i18n.getMessage('featurePrivacy')}</li>
-              </ul>
-            </div>
-            
-            <div className="divider"></div>
-            
-            <div className="donate-section">
-              <h3>{i18n.getMessage('donateTitle')}</h3>
-              <p>{i18n.getMessage('donateDescription')}</p>
-              <div className="buttons">
-                <a
-                  href="https://www.paypal.com/donate/?hosted_button_id=KSNA8YZWGMDFG"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary"
+            {!dismissedHelp && (
+              <div className="help-section">
+                <div className="help-header">
+                  <span className="help-title">💡 {i18n.getMessage('helpTitle', 'Help')}</span>
+                  <button className="help-close" onClick={dismissHelp} title={i18n.getMessage('dismissHelp', 'Dismiss')}>×</button>
+                </div>
+                {showHelp && (
+                  <div className="help-content">
+                    <p>{i18n.getMessage('popupDescription')}</p>
+                  </div>
+                )}
+                {!showHelp && (
+                  <button className="help-toggle" onClick={() => setShowHelp(true)}>
+                    {i18n.getMessage('showHelp', 'Show instructions')}
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div className="format-control-wrapper">
+              <label className="format-label">{i18n.getMessage('outputFormatLabel', 'KIMENETI FORMÁTUM')}</label>
+              <div className="format-segmented-control">
+                <button
+                  className={`format-segment ${currentFormat === 'jpeg' ? 'active' : ''}`}
+                  onClick={() => currentFormat !== 'jpeg' && toggleFormat()}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.76-4.852.072-.455.462-.788.922-.788h.581c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.761-4.457z"/>
-                  </svg>
-                  <span>{i18n.getMessage('donateButton')}</span>
-                </a>
+                  JPEG
+                </button>
+                <button
+                  className={`format-segment ${currentFormat === 'png' ? 'active' : ''}`}
+                  onClick={() => currentFormat !== 'png' && toggleFormat()}
+                >
+                  PNG
+                </button>
               </div>
             </div>
 
-            <div className="divider"></div>
+            <button
+              className="batch-button"
+              disabled
+              title={i18n.getMessage('batchProFeature')}
+            >
+              <span className="batch-icon">📁</span>
+              <span>{i18n.getMessage('batchConvert')}</span>
+              <span className="batch-badge">PRO</span>
+            </button>
+            <a
+              href="https://sic.opzozidev.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pro-link"
+            >
+              {i18n.getMessage('proDetails')}
+            </a>
 
-            <div className="developer-section">
-              <p className="developer-text">
-                <span>More tools by </span>
-                <a 
-                  href="https://opzozidev.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="developer-link"
-                >
-                  opzozidev.com
-                </a>
-              </p>
-              <div className="developer-links">
-                <a
-                  href="https://vaultpdf.opzozidev.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="developer-link-small"
-                >
-                  🔒 Simple VaultPDF
-                </a>
+            <div className="features-compact">
+              <div className="feature-item">
+                <span className="feature-icon">🖼️</span>
+                <span>{i18n.getMessage('featureConvert')}</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">📋</span>
+                <span>{i18n.getMessage('featureCopy')}</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">⚙️</span>
+                <span>{i18n.getMessage('featureQuality')}</span>
+              </div>
+              <div className="feature-item">
+                <span className="feature-icon">🔒</span>
+                <span>{i18n.getMessage('featurePrivacy')}</span>
               </div>
             </div>
           </div>
@@ -156,12 +205,46 @@ function PopupApp() {
       </div>
 
       <div className="popup-footer">
-        <span>{i18n.getMessage('version')}:</span> <span>{version}</span>
-        <span className="footer-separator">•</span>
-        <a href="#" onClick={handleRateClick} className="rate-link">
-          <span className="rate-icon">⭐</span>
-          <span>{i18n.getMessage('rateExtension') || 'Rate'}</span>
-        </a>
+        <div className="footer-top">
+          <span className="privacy-info">🔒 {i18n.getMessage('privacyBadge')}</span>
+        </div>
+        <div className="footer-bottom">
+          <span>{i18n.getMessage('version')}:</span> <span>{version}</span>
+          <span className="footer-separator">•</span>
+          <a
+            href="https://www.paypal.com/donate/?hosted_button_id=KSNA8YZWGMDFG"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="donate-link"
+            title={i18n.getMessage('donateTitle')}
+          >
+            ❤️ {i18n.getMessage('donateButtonCompact')}
+          </a>
+          <span className="footer-separator">•</span>
+          <a href="#" onClick={handleRateClick} className="rate-link">
+            <span className="rate-icon">⭐</span>
+            <span>{i18n.getMessage('rateExtension') || 'Rate'}</span>
+          </a>
+        </div>
+        <div className="footer-links">
+          <a 
+            href="https://opzozidev.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
+            opzozidev.com
+          </a>
+          <span className="footer-separator">•</span>
+          <a
+            href="https://vaultpdf.opzozidev.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link"
+          >
+            🔒 Simple VaultPDF
+          </a>
+        </div>
       </div>
     </div>
   );
