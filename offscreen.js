@@ -40,7 +40,6 @@ browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ success: true, dataUrl: result.dataUrl });
       })
       .catch(error => {
-        console.error('[SIC] Conversion error:', error);
         sendResponse({ success: false, error: error.message });
       });
 

@@ -5,6 +5,11 @@
   - Options page rebuilt with React
   - Popup rebuilt with React and tabbed interface (Home/Settings)
   - Modern component-based architecture for easier maintenance and future development
+- **Quick Format Toggle**: New feature in popup home tab
+  - Instantly switch between PNG and JPEG output format
+  - Real-time context menu updates when format changes
+  - Visual indicator showing current format
+  - Localized interface (EN/DE/HU)
 - **UI Improvements**:
   - Tabbed popup interface with Home and Settings tabs
   - Improved dark mode persistence across tabs

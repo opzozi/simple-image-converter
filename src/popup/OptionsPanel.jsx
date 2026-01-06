@@ -138,14 +138,14 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
   }
 
   if (!settings) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">{t('optionsLoading', 'Loading...')}</div>;
   }
 
   return (
     <div className="options-panel">
       <div className="options-scroll">
         <div className="form-section">
-          <h3 className="section-title">{t('optionsSectionAppearance', 'Appearance')}</h3>
+          <h3 className="section-header">{t('optionsSectionAppearance', 'APPEARANCE')}</h3>
           
           <div className="form-group">
             <label className="toggle-row">
@@ -176,7 +176,7 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
         </div>
 
         <div className="form-section">
-          <h3 className="section-title">{t('optionsSectionBehavior', 'Behavior')}</h3>
+          <h3 className="section-header">{t('optionsSectionBehavior', 'BEHAVIOR')}</h3>
           
           <div className="form-group">
             <label className="toggle-row">
@@ -191,42 +191,48 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
             </label>
           </div>
 
-          <div className="form-group">
-            <label className="input-row">
-              <span className="label-text">{t('optionsToastDuration', 'Toast duration (ms)')}</span>
-              <div className="input-wrapper">
-                <input
-                  type="number"
-                  min="500"
-                  max="10000"
-                  step="100"
-                  value={settings.toastDurationMs}
-                  onChange={(e) => setSettings({ ...settings, toastDurationMs: parseInt(e.target.value, 10) || 2000 })}
-                  className="input-sm"
-                />
-                <span className="input-suffix">ms</span>
-              </div>
-            </label>
-          </div>
+          <div className="form-group-grid">
+            <div className="form-group">
+              <label className="input-row">
+                <span className="label-text">{t('optionsToastDuration', 'Toast duration (ms)')}</span>
+                <div className="input-wrapper">
+                  <input
+                    type="number"
+                    min="500"
+                    max="10000"
+                    step="100"
+                    value={settings.toastDurationMs}
+                    onChange={(e) => setSettings({ ...settings, toastDurationMs: parseInt(e.target.value, 10) || 2000 })}
+                    className="input-sm"
+                  />
+                  <span className="input-suffix">ms</span>
+                </div>
+              </label>
+            </div>
 
-          <div className="form-group">
-            <label className="input-row">
-              <span className="label-text">{t('optionsFocusWait', 'Focus wait before clipboard (ms)')}</span>
-              <div className="input-wrapper">
-                <input
-                  type="number"
-                  min="0"
-                  max="500"
-                  step="10"
-                  value={settings.focusWaitMs}
-                  onChange={(e) => setSettings({ ...settings, focusWaitMs: parseInt(e.target.value, 10) || 50 })}
-                  className="input-sm"
-                />
-                <span className="input-suffix">ms</span>
-              </div>
-            </label>
+            <div className="form-group">
+              <label className="input-row">
+                <span className="label-text">{t('optionsFocusWait', 'Focus wait (ms)')}</span>
+                <div className="input-wrapper">
+                  <input
+                    type="number"
+                    min="0"
+                    max="500"
+                    step="10"
+                    value={settings.focusWaitMs}
+                    onChange={(e) => setSettings({ ...settings, focusWaitMs: parseInt(e.target.value, 10) || 50 })}
+                    className="input-sm"
+                  />
+                  <span className="input-suffix">ms</span>
+                </div>
+              </label>
+            </div>
           </div>
+        </div>
 
+        <div className="form-section">
+          <h3 className="section-header">{t('optionsSectionConversion', 'CONVERSION')}</h3>
+          
           <div className="form-group">
             <label className="input-row">
               <span className="label-text">{t('optionsFormat', 'Output format')}</span>
@@ -245,18 +251,18 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
           {settings.outputFormat === 'jpeg' && (
             <div className="form-group">
               <label className="input-row">
-                <span className="label-text">{t('optionsJpegQuality', 'JPEG quality (%)')}</span>
-                <div className="input-wrapper">
+                <span className="label-text">{t('optionsJpegQuality', 'JPEG quality')}</span>
+                <div className="slider-wrapper">
                   <input
-                    type="number"
+                    type="range"
                     min="50"
                     max="100"
                     step="1"
                     value={Math.round(settings.jpegQuality * 100)}
                     onChange={(e) => setSettings({ ...settings, jpegQuality: parseInt(e.target.value, 10) / 100 || 0.9 })}
-                    className="input-sm"
+                    className="slider-input"
                   />
-                  <span className="input-suffix">%</span>
+                  <span className="slider-value">{Math.round(settings.jpegQuality * 100)}%</span>
                 </div>
               </label>
               <p className="hint">{t('optionsJpegHint', '70-90% is usually enough. Higher = larger files.')}</p>
@@ -281,7 +287,11 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
             </label>
             <p className="hint">{t('optionsResizeHint', 'Max longer edge in pixels. 0 keeps original size.')}</p>
           </div>
+        </div>
 
+        <div className="form-section">
+          <h3 className="section-header">{t('optionsSectionFiles', 'FILES')}</h3>
+          
           <div className="form-group">
             <label className="input-row">
               <span className="label-text">{t('optionsFilenamePattern', 'Filename pattern')}</span>
@@ -293,6 +303,30 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
                 className="input-lg"
               />
             </label>
+            <div className="pattern-chips">
+              {['{siteShort}', '{site}', '{name}', '{date}', '{time}', '{ext}'].map((variable) => (
+                <button
+                  key={variable}
+                  type="button"
+                  className="pattern-chip"
+                  onClick={() => {
+                    const input = document.querySelector('.input-lg');
+                    if (input) {
+                      const start = input.selectionStart || 0;
+                      const end = input.selectionEnd || 0;
+                      const newValue = settings.filenamePattern.slice(0, start) + variable + settings.filenamePattern.slice(end);
+                      setSettings({ ...settings, filenamePattern: newValue });
+                      setTimeout(() => {
+                        input.focus();
+                        input.setSelectionRange(start + variable.length, start + variable.length);
+                      }, 0);
+                    }
+                  }}
+                >
+                  +{variable}
+                </button>
+              ))}
+            </div>
             <p className="hint">{t('optionsPatternHint', 'Use {site}, {name}, {date}, {time}, {ext}. Example: example-image-2025-01-01.png')}</p>
           </div>
 
@@ -325,8 +359,8 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
       </div>
 
       <div className="options-actions">
-        <button onClick={handleSave} className="btn-primary">{t('optionsSaveButton', 'Save')}</button>
-        <button onClick={handleReset} className="btn-ghost">{t('optionsResetButton', 'Reset to defaults')}</button>
+        <button onClick={handleSave} className="btn btn-primary">{t('optionsSaveButton', 'Save')}</button>
+        <button onClick={handleReset} className="btn btn-outline">{t('optionsResetButton', 'Reset')}</button>
         <span className="status-text">{status}</span>
       </div>
     </div>

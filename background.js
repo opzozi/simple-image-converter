@@ -2,21 +2,54 @@
 const browserAPI = chrome;
 
 let creating;
+let menuReadyPromise = null;
+
+async function createContextMenus() {
+  try {
+    await browserAPI.contextMenus.removeAll();
+  } catch (_) {
+    // ignore
+  }
+
+  try {
+    browserAPI.contextMenus.create({
+      id: 'save-image-as-png',
+      title: browserAPI.i18n.getMessage('contextMenuTitle'),
+      contexts: ['image']
+    });
+    browserAPI.contextMenus.create({
+      id: 'copy-image-as-png',
+      title: browserAPI.i18n.getMessage('contextMenuCopyTitle'),
+      contexts: ['image']
+    });
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function ensureMenusReady() {
+  if (!menuReadyPromise) {
+    menuReadyPromise = createContextMenus().catch(err => {
+      menuReadyPromise = null;
+      throw err;
+    });
+  }
+  return menuReadyPromise;
+}
+
+// Ensure menus exist whenever the worker starts
+ensureMenusReady();
 
 browserAPI.runtime.onInstalled.addListener(async () => {
-  await browserAPI.contextMenus.removeAll();
-  
-  browserAPI.contextMenus.create({
-    id: 'save-image-as-png',
-    title: browserAPI.i18n.getMessage('contextMenuTitle'),
-    contexts: ['image']
-  });
-  browserAPI.contextMenus.create({
-    id: 'copy-image-as-png',
-    title: browserAPI.i18n.getMessage('contextMenuCopyTitle'),
-    contexts: ['image']
-  });
-  getSettings().then(s => updateContextMenuTitles(s.outputFormat));
+  menuReadyPromise = null;
+  await ensureMenusReady();
+});
+
+browserAPI.runtime.onStartup?.addListener(async () => {
+  menuReadyPromise = null;
+  await ensureMenusReady();
+  const settings = await getSettings();
+  updateContextMenuTitles(settings.outputFormat);
 });
 
 browserAPI.contextMenus.onClicked.addListener((info, tab) => {
@@ -34,31 +67,19 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
-browserAPI.runtime.onStartup?.addListener(async () => {
-  try {
-    await browserAPI.contextMenus.removeAll();
-    browserAPI.contextMenus.create({
-      id: 'save-image-as-png',
-      title: browserAPI.i18n.getMessage('contextMenuTitle'),
-      contexts: ['image']
-    });
-    browserAPI.contextMenus.create({
-      id: 'copy-image-as-png',
-      title: browserAPI.i18n.getMessage('contextMenuCopyTitle'),
-      contexts: ['image']
-    });
-  } catch (err) {
-    // Ignore if menu items already exist
-  }
-  const settings = await getSettings();
-  updateContextMenuTitles(settings.outputFormat);
-});
-
 browserAPI.storage.onChanged.addListener(async (changes, area) => {
   if (area !== 'sync' && area !== 'local') return;
   if (changes.outputFormat) {
     updateContextMenuTitles(changes.outputFormat.newValue);
   }
+});
+
+browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'FORMAT_CHANGED') {
+    updateContextMenuTitles(message.format);
+    sendResponse({ success: true });
+  }
+  return true;
 });
 
 const defaultSettings = {
@@ -83,12 +104,24 @@ function updateContextMenuTitles(fmt) {
   const fmtLabel = (fmt === 'jpeg' ? 'JPEG' : fmt === 'webp' ? 'WEBP' : 'PNG');
   const saveTitle = `${browserAPI.i18n.getMessage('contextMenuTitle') || 'Save image'} (${fmtLabel})`;
   const copyTitle = `${browserAPI.i18n.getMessage('contextMenuCopyTitle') || 'Copy image'} (${fmtLabel})`;
-  try {
-    browserAPI.contextMenus.update('save-image-as-png', { title: saveTitle });
-    browserAPI.contextMenus.update('copy-image-as-png', { title: copyTitle });
-  } catch (err) {
-    // Could not update context menu titles
-  }
+  const applyTitles = async () => {
+    await ensureMenusReady();
+    try {
+      browserAPI.contextMenus.update('save-image-as-png', { title: saveTitle });
+      browserAPI.contextMenus.update('copy-image-as-png', { title: copyTitle });
+    } catch (err) {
+      // If menus are missing, recreate and retry once
+      menuReadyPromise = null;
+      await ensureMenusReady();
+      try {
+        browserAPI.contextMenus.update('save-image-as-png', { title: saveTitle });
+        browserAPI.contextMenus.update('copy-image-as-png', { title: copyTitle });
+      } catch (_) {
+        // give up silently
+      }
+    }
+  };
+  applyTitles();
 }
 
 function normalizeSettings(raw) {
@@ -111,12 +144,13 @@ function normalizeSettings(raw) {
 async function convertAndDownloadImage(imageUrl, pageUrl = '') {
   try {
     const settings = await getSettings();
-    const response = await convertImageUniversal(imageUrl, {
+    const targetTabId = await getActiveTabId();
+    const response = await convertImageWithFallback(imageUrl, {
       fetchWithCredentials: !!settings.fetchWithCredentials,
       format: settings.outputFormat,
       jpegQuality: settings.jpegQuality,
       resizeMax: settings.resizeMax
-    });
+    }, targetTabId);
     
     if (response.success) {
       const filename = getFilenameFromUrl(imageUrl, pageUrl, settings.outputFormat, settings.filenamePattern);
@@ -163,41 +197,53 @@ async function convertAndDownloadImage(imageUrl, pageUrl = '') {
         }
       );
     } else {
-      // Image conversion failed
+      const errorMsg = response.error || 'Conversion failed';
+      sendToastToActive(false, browserAPI.i18n.getMessage('saveErrorToast') || errorMsg, settings);
     }
   } catch (error) {
-    // Error in convertAndDownloadImage
+    const settings = await getSettings();
+    sendToastToActive(false, browserAPI.i18n.getMessage('saveErrorToast') || error.message || 'Download failed.', settings);
   }
 }
 
 async function copyImageToClipboard(imageUrl, tabId) {
   try {
     const settings = await getSettings();
-    const convertResponse = await convertImageUniversal(imageUrl, {
-      fetchWithCredentials: !!settings.fetchWithCredentials,
-      format: settings.outputFormat,
-      jpegQuality: settings.jpegQuality,
-      resizeMax: settings.resizeMax
-    });
+    const convertResponse = await convertImageWithFallback(
+      imageUrl,
+      {
+        fetchWithCredentials: !!settings.fetchWithCredentials,
+        format: settings.outputFormat,
+        jpegQuality: settings.jpegQuality,
+        resizeMax: settings.resizeMax
+      },
+      tabId
+    );
 
     if (!convertResponse?.success || !convertResponse.dataUrl) {
-      // Copy failed: conversion error
+      sendToastToActive(false, browserAPI.i18n.getMessage('copyErrorToast') || convertResponse?.error || 'Copy failed.', settings);
       return;
     }
 
     const targetTabId = tabId ?? (await getActiveTabId());
     if (!targetTabId) {
-      // Copy failed: no target tab available
+      sendToastToActive(false, browserAPI.i18n.getMessage('copyErrorToast') || 'No active tab available.', settings);
       return;
     }
 
-    await ensureContentScript(targetTabId);
+    try {
+      await ensureContentScript(targetTabId);
+      await new Promise(resolve => setTimeout(resolve, 100));
+    } catch (err) {
+      // Content script may already be loaded
+    }
 
     browserAPI.tabs.sendMessage(
       targetTabId,
       {
         type: 'COPY_IMAGE_DATA',
         dataUrl: convertResponse.dataUrl,
+        format: settings.outputFormat,
         options: {
           toastEnabled: !!settings.toastEnabled,
           toastDurationMs: settings.toastDurationMs,
@@ -207,16 +253,22 @@ async function copyImageToClipboard(imageUrl, tabId) {
       response => {
         const err = browserAPI.runtime.lastError;
         if (err) {
-          // Copy failed (tabs.sendMessage)
+          sendToastToActive(false, `${browserAPI.i18n.getMessage('copyErrorToast') || 'Copy failed'}: ${err.message}`, settings);
           return;
         }
         if (!response || !response.success) {
-          // Copy failed
+          const errorMsg = response?.error || 'Copy failed';
+          const baseMsg = browserAPI.i18n.getMessage('copyErrorToast') || 'Copy failed';
+          const fullMsg = errorMsg && errorMsg !== 'Copy failed' 
+            ? `${baseMsg}: ${errorMsg}` 
+            : baseMsg;
+          sendToastToActive(false, fullMsg, settings);
         }
       }
     );
   } catch (error) {
-    // Error in copyImageToClipboard
+    const settings = await getSettings();
+    sendToastToActive(false, browserAPI.i18n.getMessage('copyErrorToast') || error.message || 'Copy failed.', settings);
   }
 }
 
@@ -225,15 +277,109 @@ async function getActiveTabId() {
   return activeTab?.id;
 }
 
+async function convertImageWithFallback(imageUrl, opts, tabId) {
+  // Check if offscreen API is available
+  const hasOffscreen = browserAPI.offscreen && typeof browserAPI.offscreen.createDocument === 'function';
+  
+  let offscreenResult;
+  if (hasOffscreen) {
+    try {
+      // Add timeout to offscreen conversion (3 seconds)
+      offscreenResult = await Promise.race([
+        convertImageUniversal(imageUrl, opts),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Offscreen conversion timeout')), 3000))
+      ]);
+      if (offscreenResult?.success && offscreenResult?.dataUrl) {
+        return offscreenResult;
+      }
+    } catch (err) {
+      // Offscreen failed or timed out, will try fallback
+    }
+  }
+  
+  // Fallback: Background script downloads image (no CORS), converts to Base64, then tab script does canvas conversion
+  const targetTabId = tabId ?? (await getActiveTabId());
+  if (!targetTabId) {
+    throw new Error(offscreenResult?.error || 'No active tab available for fallback conversion');
+  }
+  
+  try {
+    // Step 1: Background script fetches image (no CORS restriction here)
+    const fetchResponse = await fetch(imageUrl, {
+      credentials: opts.fetchWithCredentials ? 'include' : 'omit'
+    });
+    if (!fetchResponse.ok) {
+      throw new Error('Fetch failed: ' + fetchResponse.status);
+    }
+    const blob = await fetchResponse.blob();
+    
+    // Step 2: Convert blob to Base64 in background script (Service Worker compatible)
+    const arrayBuffer = await blob.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    const chunkSize = 0x8000;
+    let binaryParts = [];
+    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+      const chunk = uint8Array.subarray(i, i + chunkSize);
+      binaryParts.push(String.fromCharCode.apply(null, Array.from(chunk)));
+    }
+    const binary = binaryParts.join('');
+    const base64 = btoa(binary);
+    const mimeType = blob.type || 'image/png';
+    const base64DataUrl = `data:${mimeType};base64,${base64}`;
+    
+    // Step 3: Send Base64 to tab script for canvas conversion (no CORS issue with Base64)
+    const [result] = await browserAPI.scripting.executeScript({
+      target: { tabId: targetTabId },
+      func: async (base64Url, options) => {
+        try {
+          const img = new Image();
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = base64Url;
+          });
+          
+          const canvas = document.createElement('canvas');
+          let w = img.width;
+          let h = img.height;
+          if (options.resizeMax && options.resizeMax > 0 && (w > options.resizeMax || h > options.resizeMax)) {
+            const scale = Math.min(options.resizeMax / w, options.resizeMax / h);
+            w = Math.round(w * scale);
+            h = Math.round(h * scale);
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const mime = options.format === 'jpeg' ? 'image/jpeg' : 'image/png';
+          const dataUrl = canvas.toDataURL(mime, options.format === 'jpeg' ? options.jpegQuality : undefined);
+          return { success: true, dataUrl };
+        } catch (e) {
+          return { success: false, error: e.message || 'Fallback conversion failed' };
+        }
+      },
+      args: [base64DataUrl, opts]
+    });
+    if (result?.result?.success) return result.result;
+    throw new Error(result?.result?.error || offscreenResult?.error || 'Conversion failed');
+  } catch (fallbackErr) {
+    throw new Error(fallbackErr.message || offscreenResult?.error || 'Both offscreen and fallback conversion failed');
+  }
+}
+
 async function ensureContentScript(tabId) {
   if (!tabId) return;
-  await browserAPI.scripting.executeScript({
-    target: { tabId },
-    files: ['copy-helper.js']
-  }).catch(err => {
-    // Unable to inject content script
-  });
+  try {
+    await browserAPI.scripting.executeScript({
+      target: { tabId },
+      files: ['copy-helper.js']
+    });
+    await new Promise(resolve => setTimeout(resolve, 50));
+  } catch (err) {
+    // Content script may already be loaded via manifest
+  }
 }
+
 
 function isHttpLike(url) {
   return typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'));
