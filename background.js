@@ -7,24 +7,59 @@ let menuReadyPromise = null;
 async function createContextMenus() {
   try {
     await browserAPI.contextMenus.removeAll();
+    // Small delay to ensure removeAll completes
+    await new Promise(resolve => setTimeout(resolve, 50));
   } catch (_) {
     // ignore
   }
 
+  // Remove individual items if they exist (more reliable than removeAll)
   try {
+    await browserAPI.contextMenus.remove('save-image-as-png');
+  } catch (_) {
+    // Item doesn't exist, which is fine
+  }
+  try {
+    await browserAPI.contextMenus.remove('copy-image-as-png');
+  } catch (_) {
+    // Item doesn't exist, which is fine
+  }
+  
+  // Small delay before creating new items
+  await new Promise(resolve => setTimeout(resolve, 50));
+  
+  // Create menu items with error handling
+  return new Promise((resolve) => {
+    let created = 0;
+    const checkComplete = () => {
+      created++;
+      if (created === 2) resolve();
+    };
+    
     browserAPI.contextMenus.create({
       id: 'save-image-as-png',
       title: browserAPI.i18n.getMessage('contextMenuTitle'),
       contexts: ['image']
+    }, () => {
+      const err = browserAPI.runtime.lastError;
+      if (err && !err.message.includes('duplicate')) {
+        console.warn('Failed to create save-image-as-png menu:', err.message);
+      }
+      checkComplete();
     });
+    
     browserAPI.contextMenus.create({
       id: 'copy-image-as-png',
       title: browserAPI.i18n.getMessage('contextMenuCopyTitle'),
       contexts: ['image']
+    }, () => {
+      const err = browserAPI.runtime.lastError;
+      if (err && !err.message.includes('duplicate')) {
+        console.warn('Failed to create copy-image-as-png menu:', err.message);
+      }
+      checkComplete();
     });
-  } catch (err) {
-    throw err;
-  }
+  });
 }
 
 async function ensureMenusReady() {
