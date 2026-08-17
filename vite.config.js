@@ -16,7 +16,6 @@ export default defineConfig({
         chunkFileNames: '[name]-[hash].js',
         assetFileNames: (assetInfo) => {
           if (assetInfo.name === 'index.html') {
-            // Keep in subdirectories, postbuild.js will move them
             return assetInfo.name;
           }
           if (assetInfo.name.endsWith('.css')) {

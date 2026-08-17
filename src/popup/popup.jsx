@@ -30,7 +30,6 @@ function PopupApp() {
 
   async function loadDarkMode() {
     const stored = await storage.get(['darkMode']);
-    // Default to dark mode if not set
     const currentDarkMode = stored.darkMode !== undefined ? stored.darkMode : true;
     setDarkMode(currentDarkMode);
     applyDarkMode(currentDarkMode);
@@ -56,7 +55,6 @@ function PopupApp() {
     const newFormat = currentFormat === 'png' ? 'jpeg' : 'png';
     await storage.set({ outputFormat: newFormat });
     setCurrentFormat(newFormat);
-    // Notify background script to update context menu
     chrome.runtime.sendMessage({ type: 'FORMAT_CHANGED', format: newFormat });
   }
 
@@ -143,7 +141,7 @@ function PopupApp() {
             )}
 
             <div className="format-control-wrapper">
-              <label className="format-label">{i18n.getMessage('outputFormatLabel', 'KIMENETI FORMÁTUM')}</label>
+              <label className="format-label">{i18n.getMessage('outputFormatLabel', 'OUTPUT FORMAT')}</label>
               <div className="format-segmented-control">
                 <button
                   className={`format-segment ${currentFormat === 'jpeg' ? 'active' : ''}`}

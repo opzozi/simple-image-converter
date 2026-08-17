@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
   "permissions": [
@@ -9,9 +9,7 @@
     "downloads",
     "clipboardWrite",
     "storage",
-    "scripting"
-  ],
-  "optional_permissions": [
+    "scripting",
     "offscreen"
   ],
   "host_permissions": [
@@ -44,16 +42,6 @@
         "copy-helper.js"
       ],
       "run_at": "document_idle"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "offscreen.html"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
     }
   ]
 }

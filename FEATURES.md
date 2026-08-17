@@ -8,7 +8,7 @@ Simple Image Converter is a lightweight Chrome extension that converts and saves
 
 ### 1. Image Conversion
 - **Universal Format Support**: Converts WebP, AVIF, JPG, PNG, and other image formats
-- **Output Formats**: PNG (lossless) or JPEG (configurable quality)
+- **Output Formats**: PNG (lossless) or JPEG (configurable quality). JPEG has no alpha channel, so transparent areas are composited onto a white background.
 - **Offscreen API**: Uses Chrome's Offscreen API for efficient Canvas-based conversion
 - **CORS-Safe**: Handles cross-origin images properly through offscreen document
 
@@ -156,6 +156,7 @@ All UI elements, error messages, and toasts are localized.
 - Images must be accessible via HTTP/HTTPS
 - Some images may fail due to CORS restrictions (rare)
 - Very large images (>50MB) may cause performance issues
+- Chrome-internal pages (`chrome://`, the Chrome Web Store) block content scripts. Save still works when the image URL can be fetched; copy may be unavailable. Feedback then appears as a toast or on the extension icon.
 
 ## Future Enhancements (Potential)
 

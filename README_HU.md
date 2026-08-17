@@ -51,6 +51,8 @@ Chrome böngésző bővítmény, amely bármilyen weboldali képet PNG vagy JPEG
 - **`offscreen`** — Canvas API hozzáférés a konverzióhoz
 - **`<all_urls>`** — Képek betöltése bármely weboldalról (CORS kezelés)
 
+Ez a repository az **ingyenes, MIT-licencű** bővítményt tartalmazza. A PRO funkciók (kötegelt konverzió, licenckezelés) zárt forrásúak, **nincsenek** ebben a repóban.
+
 ## Támogatott Nyelvek
 
 - English

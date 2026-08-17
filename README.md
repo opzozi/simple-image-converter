@@ -69,6 +69,8 @@ User Right-Click → Context Menu → Service Worker (background.js)
 - **`offscreen`** — Access Canvas API for conversion
 - **`<all_urls>`** — Load images from any website (CORS handling)
 
+This repository contains the **free MIT-licensed** extension. PRO features (batch conversion, license checks) are proprietary and are **not** included here.
+
 [Read our Privacy Policy](PRIVACY.md)
 
 ## Supported Languages

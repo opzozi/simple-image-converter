@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.2 (2026-08-17)
+- **JPEG transparency**: Transparent pixels are composited onto a white background before JPEG export (PNG is unchanged)
+- **Protected pages**: No script injection on Chrome-internal pages or the Chrome Web Store; save still runs when the image URL is fetchable; copy falls back to the offscreen clipboard or a localized message
+- **Offscreen conversion**: The `offscreen` permission is now required so conversion no longer depends on injecting a canvas into the current tab
+- **Clipboard**: If the browser rejects `image/jpeg` on the clipboard, copy falls back to PNG
+- **Filenames**: Country-code domains such as `example.co.uk` now use the site name instead of `co`
+- **Settings reset**: Dark mode is stored explicitly on reset instead of being left undefined
+- **Cleanup**: Removed unused `web_accessible_resources`, dead offscreen `postMessage` handler, and mixed-language changelog text
+
+## 1.3.1
+- Fixed duplicate context menu items on reload
+- Included Vite chunk files in the release package
+
 ## 1.3.0 (2026-01-05)
 - **React Migration**: Complete migration to React for all UI components
   - Options page rebuilt with React
@@ -45,7 +58,7 @@
 ## 1.1.0
 - Added "Copy Image as PNG" context menu; PNG copy now CORS-safe via offscreen conversion
 - Added localized toasts for copy success/error (en/de/hu)
-- Updated popup features, README-k, és manifest to reflect the new capability
+- Updated popup features, README files, and manifest to reflect the new capability
 - Clipboard permission (`clipboardWrite`) added; content script registered for copy handling
 
 ## 1.0.0

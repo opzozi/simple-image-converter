@@ -52,7 +52,6 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
   const [status, setStatus] = useState('');
   const [darkMode, setDarkMode] = useState(propDarkMode !== undefined ? propDarkMode : false);
 
-  // Sync darkMode from prop
   useEffect(() => {
     if (propDarkMode !== undefined) {
       setDarkMode(propDarkMode);
@@ -65,8 +64,6 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
       const normalized = normalizeSettings({ ...defaults, ...stored });
       const systemDark = normalized.darkMode !== undefined ? normalized.darkMode : getSystemDarkMode();
       setSettings(normalized);
-      
-      // Use prop darkMode if available, otherwise use stored/system
       const initialDarkMode = propDarkMode !== undefined ? propDarkMode : systemDark;
       setDarkMode(initialDarkMode);
       applyDarkMode(initialDarkMode);
@@ -132,7 +129,7 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
     const systemDark = normalized.darkMode !== undefined ? normalized.darkMode : getSystemDarkMode();
     setSettings(normalized);
     setDarkMode(systemDark);
-    await storage.set(normalized);
+    await storage.set({ ...normalized, darkMode: systemDark });
     setStatus(t('optionsResetDone', 'Defaults restored.'));
     setTimeout(() => setStatus(''), 1500);
   }
@@ -157,11 +154,9 @@ function OptionsPanel({ darkMode: propDarkMode, onDarkModeChange }) {
                   const newDarkMode = e.target.checked;
                   setDarkMode(newDarkMode);
                   applyDarkMode(newDarkMode);
-                  // Notify parent component
                   if (onDarkModeChange) {
                     onDarkModeChange(newDarkMode);
                   }
-                  // Save immediately when toggled
                   if (settings) {
                     const updatedSettings = { ...settings, darkMode: newDarkMode };
                     setSettings(updatedSettings);

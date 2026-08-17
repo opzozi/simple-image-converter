@@ -63,6 +63,14 @@
     "message": "Speichern fehlgeschlagen",
     "description": "Toast shown on save error"
   },
+  "pageRestrictedCopy": {
+    "message": "Chrome erlaubt das Kopieren auf dieser Seite nicht. Speichere das Bild, oder öffne es auf einer normalen Website.",
+    "description": "Shown when copy is blocked on a Chrome-protected page"
+  },
+  "pageRestrictedSave": {
+    "message": "Chrome schützt diese Seite, daher konnte das Bild hier nicht gespeichert werden.",
+    "description": "Shown when save fails because the page is Chrome-protected"
+  },
   "optionsTitle": {
     "message": "Einstellungen",
     "description": "Options page title"
@@ -152,7 +160,7 @@
     "description": "Helper text for format choice"
   },
   "optionsJpegHint": {
-    "message": "70-90% reicht meist. Höher = größere Dateien.",
+    "message": "70-90% reicht meist. Höher = größere Dateien. Transparente Bereiche werden weiß.",
     "description": "Helper text for jpeg quality"
   },
   "optionsResizeHint": {

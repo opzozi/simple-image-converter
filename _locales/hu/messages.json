@@ -63,6 +63,14 @@
     "message": "Mentés sikertelen",
     "description": "Toast shown on save error"
   },
+  "pageRestrictedCopy": {
+    "message": "A Chrome ezen az oldalon nem engedi a vágólapra másolást. Használd a Mentést, vagy próbáld egy sima weboldalon.",
+    "description": "Shown when copy is blocked on a Chrome-protected page"
+  },
+  "pageRestrictedSave": {
+    "message": "A Chrome védi ezt az oldalt, ezért a kép itt nem menthető.",
+    "description": "Shown when save fails because the page is Chrome-protected"
+  },
   "optionsTitle": {
     "message": "Beállítások",
     "description": "Options page title"
@@ -152,7 +160,7 @@
     "description": "Helper text for format choice"
   },
   "optionsJpegHint": {
-    "message": "70-90% általában elég. Magasabb érték = nagyobb fájl.",
+    "message": "70-90% általában elég. Magasabb érték = nagyobb fájl. Az átlátszó részek fehérek lesznek.",
     "description": "Helper text for jpeg quality"
   },
   "optionsResizeHint": {

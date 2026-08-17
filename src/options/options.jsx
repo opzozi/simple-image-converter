@@ -114,13 +114,13 @@ function OptionsApp() {
     const systemDark = normalized.darkMode !== undefined ? normalized.darkMode : getSystemDarkMode();
     setSettings(normalized);
     setDarkMode(systemDark);
-    await storage.set(normalized);
+    await storage.set({ ...normalized, darkMode: systemDark });
     setStatus(t('optionsResetDone', 'Defaults restored.'));
     setTimeout(() => setStatus(''), 1500);
   }
 
   if (!settings) {
-    return <div>Loading...</div>;
+    return <div>{t('optionsLoading', 'Loading...')}</div>;
   }
 
   return (
