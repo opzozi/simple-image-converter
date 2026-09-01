@@ -53,6 +53,11 @@ Chrome böngésző bővítmény, amely bármilyen weboldali képet PNG vagy JPEG
 
 Ez a repository az **ingyenes, MIT-licencű** bővítményt tartalmazza. A PRO funkciók (kötegelt konverzió, licenckezelés) zárt forrásúak, **nincsenek** ebben a repóban.
 
+További információ:
+
+- [PRO_LICENSE.md](PRO_LICENSE.md) — PRO licenc
+- [docs/REPOSITORY-STRATEGY.md](docs/REPOSITORY-STRATEGY.md) — nyilvános vs privát repo felosztás
+
 ## Támogatott Nyelvek
 
 - English
@@ -75,7 +80,13 @@ Tetszik a bővítmény? Segíthetsz:
 
 ## Licenc
 
-Ez a projekt MIT License alatt van - lásd a [LICENSE](LICENSE) fájlt a részletekért.
+### Ingyenes verzió (ez a repository)
+
+MIT License — lásd a [LICENSE](LICENSE) fájlt.
+
+### PRO verzió (nincs ebben a repositoryban)
+
+A PRO funkciók zárt forrásúak. Licenc: [PRO_LICENSE.md](PRO_LICENSE.md). A PRO forráskód privát repositoryban tartandó.
 
 ## Problémák
 

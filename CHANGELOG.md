@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.3 (2026-09-01)
+- **Licensing:** Added [PRO_LICENSE.md](PRO_LICENSE.md) and [docs/REPOSITORY-STRATEGY.md](docs/REPOSITORY-STRATEGY.md) for the free/PRO repository split
+- **Settings:** Saving output format from the options page now updates the context menu immediately
+- **Locales:** Replaced "Coming soon" PRO strings with product-ready wording (EN/DE/HU)
+- **Cleanup:** Expanded `.gitignore` for PRO-only files and secrets; removed unused locale keys
+
 ## 1.3.2 (2026-08-17)
 - **JPEG transparency**: Transparent pixels are composited onto a white background before JPEG export (PNG is unchanged)
 - **Protected pages**: No script injection on Chrome-internal pages or the Chrome Web Store; save still runs when the image URL is fetchable; copy falls back to the offscreen clipboard or a localized message
@@ -17,7 +23,6 @@
 - **React Migration**: Complete migration to React for all UI components
   - Options page rebuilt with React
   - Popup rebuilt with React and tabbed interface (Home/Settings)
-  - Modern component-based architecture for easier maintenance and future development
 - **Quick Format Toggle**: New feature in popup home tab
   - Instantly switch between PNG and JPEG output format
   - Real-time context menu updates when format changes
@@ -29,8 +34,8 @@
   - Localized tab names (EN/DE/HU)
   - Professional color scheme replacing purple gradient
 - **Technical Improvements**:
-  - Vite build system for modern development workflow
-  - Better code organization and maintainability
+  - Vite build system
+  - Improved code organization
 
 ## 1.2.0
 - **Modern Settings UI**: Complete redesign of options page with iOS-style toggles, modern form elements, and dark mode support

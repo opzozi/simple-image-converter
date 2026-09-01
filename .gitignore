@@ -3,10 +3,22 @@ dist/
 *.log
 .DS_Store
 *.local
-PROJECT_STATUS.md
 temp-release-*/
 *.zip
 *.crx
 *.pem
 .env
 .env.local
+*.key
+*.secret
+
+# Local notes and status files
+PROJECT_STATUS.md
+LOCAL_NOTES.md
+
+# PRO-only source (keep in private repository)
+src/pro/features/*.real.jsx
+src/pro/features/*.real.js
+src/pro/**/*.private.jsx
+src/pro/**/*.private.js
+src/pro/license-config.local.js

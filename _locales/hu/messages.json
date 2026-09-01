@@ -231,21 +231,13 @@
     "message": "Kötegelt konvertálás",
     "description": "Batch convert button text"
   },
-  "batchComingSoon": {
-    "message": "Hamarosan elérhető: helyi fájlok konvertálása",
-    "description": "Batch feature coming soon tooltip"
-  },
   "batchProFeature": {
-    "message": "Hamarosan elérhető a Pro verzióban. Részletek: sic.opzozidev.com",
-    "description": "Batch feature pro version tooltip"
+    "message": "PRO verzióban elérhető. Részletek: sic.opzozidev.com",
+    "description": "Batch feature PRO tooltip"
   },
   "proDetails": {
-    "message": "Részletek a Pro verzióról →",
-    "description": "Link text to pro version details"
-  },
-  "comingSoon": {
-    "message": "Hamarosan",
-    "description": "Coming soon badge text"
+    "message": "PRO verzió részletei →",
+    "description": "Link text to PRO version details"
   },
   "helpTitle": {
     "message": "Súgó",

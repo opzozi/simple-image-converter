@@ -113,7 +113,6 @@ The extension uses intelligent filename generation that prioritizes the page URL
   - Not treated as an error
 - **Actual Errors**: Network failures, permission issues, etc.
   - Shows localized "Save failed" message
-  - Logs error details for debugging
 
 ### Copy Errors
 - **Clipboard API Unavailable**: Graceful fallback
@@ -157,6 +156,12 @@ All UI elements, error messages, and toasts are localized.
 - Some images may fail due to CORS restrictions (rare)
 - Very large images (>50MB) may cause performance issues
 - Chrome-internal pages (`chrome://`, the Chrome Web Store) block content scripts. Save still works when the image URL can be fetched; copy may be unavailable. Feedback then appears as a toast or on the extension icon.
+
+## Licensing
+
+- **Free edition:** MIT License — see [LICENSE](LICENSE)
+- **PRO edition:** Proprietary — see [PRO_LICENSE.md](PRO_LICENSE.md)
+- **Repository split:** See [docs/REPOSITORY-STRATEGY.md](docs/REPOSITORY-STRATEGY.md)
 
 ## Future Enhancements (Potential)
 

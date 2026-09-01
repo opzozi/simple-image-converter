@@ -105,6 +105,9 @@ function OptionsApp() {
     };
 
     await storage.set(payload);
+    if (payload.outputFormat) {
+      chrome.runtime.sendMessage({ type: 'FORMAT_CHANGED', format: payload.outputFormat });
+    }
     setStatus(t('optionsSaved', 'Saved.'));
     setTimeout(() => setStatus(''), 1500);
   }

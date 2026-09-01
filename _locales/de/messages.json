@@ -231,21 +231,13 @@
     "message": "Batch-Konvertierung",
     "description": "Batch convert button text"
   },
-  "batchComingSoon": {
-    "message": "Bald verfügbar: lokale Dateien konvertieren",
-    "description": "Batch feature coming soon tooltip"
-  },
   "batchProFeature": {
-    "message": "Bald in Pro-Version verfügbar. Details: sic.opzozidev.com",
-    "description": "Batch feature pro version tooltip"
+    "message": "In PRO verfügbar. Details: sic.opzozidev.com",
+    "description": "Batch feature PRO tooltip"
   },
   "proDetails": {
-    "message": "Pro-Version Details →",
-    "description": "Link text to pro version details"
-  },
-  "comingSoon": {
-    "message": "Bald",
-    "description": "Coming soon badge text"
+    "message": "PRO-Version Details →",
+    "description": "Link text to PRO version details"
   },
   "helpTitle": {
     "message": "Hilfe",
