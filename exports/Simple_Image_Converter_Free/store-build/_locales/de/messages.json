@@ -1,0 +1,263 @@
+{
+  "extensionName": {
+    "message": "Simple Image Converter",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Bilder per Rechtsklick konvertieren, speichern oder kopieren – im gewünschten Format.",
+    "description": "Extension description"
+  },
+  "contextMenuTitle": {
+    "message": "Bild speichern",
+    "description": "Context menu item title"
+  },
+  "contextMenuCopyTitle": {
+    "message": "Bild kopieren",
+    "description": "Context menu copy item title"
+  },
+  "popupTitle": {
+    "message": "Simple Image Converter",
+    "description": "Popup title"
+  },
+  "popupDescription": {
+    "message": "Rechtsklick auf ein Bild zum Speichern oder Kopieren in die Zwischenablage. Format und Qualität stellst du in den Einstellungen ein.",
+    "description": "Popup description"
+  },
+  "popupFeatures": {
+    "message": "Funktionen:",
+    "description": "Features section title"
+  },
+  "featureConvert": {
+    "message": "Bilder konvertieren (WebP, AVIF, JPG, PNG usw.) zu PNG oder JPEG",
+    "description": "Feature 1"
+  },
+  "featureCopy": {
+    "message": "Bilder in die Zwischenablage kopieren (Format wählbar)",
+    "description": "Feature 2"
+  },
+  "featureQuality": {
+    "message": "Intelligente Dateinamen mit Website-Name (nicht CDN)",
+    "description": "Feature 3"
+  },
+  "featurePrivacy": {
+    "message": "100% offline, keine Datenerfassung",
+    "description": "Feature 4"
+  },
+  "copySuccessToast": {
+    "message": "Bild kopiert",
+    "description": "Toast shown on successful copy"
+  },
+  "copyErrorToast": {
+    "message": "Kopieren fehlgeschlagen",
+    "description": "Toast shown on failed copy"
+  },
+  "saveSuccessToast": {
+    "message": "Bild gespeichert",
+    "description": "Toast shown on successful save"
+  },
+  "saveCancelledToast": {
+    "message": "Speichern abgebrochen",
+    "description": "Toast shown when user cancels save dialog"
+  },
+  "saveErrorToast": {
+    "message": "Speichern fehlgeschlagen",
+    "description": "Toast shown on save error"
+  },
+  "pageRestrictedCopy": {
+    "message": "Chrome erlaubt das Kopieren auf dieser Seite nicht. Speichere das Bild, oder öffne es auf einer normalen Website.",
+    "description": "Shown when copy is blocked on a Chrome-protected page"
+  },
+  "pageRestrictedSave": {
+    "message": "Chrome schützt diese Seite, daher konnte das Bild hier nicht gespeichert werden.",
+    "description": "Shown when save fails because the page is Chrome-protected"
+  },
+  "optionsTitle": {
+    "message": "Einstellungen",
+    "description": "Options page title"
+  },
+  "optionsDescription": {
+    "message": "Konfiguriere das Verhalten der Erweiterung.",
+    "description": "Options page description"
+  },
+  "optionsSectionAppearance": {
+    "message": "ERSCHEINUNGSBILD",
+    "description": "Options appearance section title"
+  },
+  "optionsDarkMode": {
+    "message": "Dunkler Modus",
+    "description": "Label for dark mode toggle"
+  },
+  "optionsSectionBehavior": {
+    "message": "VERHALTEN",
+    "description": "Options section title"
+  },
+  "optionsSectionConversion": {
+    "message": "KONVERTIERUNG",
+    "description": "Conversion section title"
+  },
+  "optionsSectionFiles": {
+    "message": "DATEIEN",
+    "description": "Files section title"
+  },
+  "optionsToastEnabled": {
+    "message": "Toasts für Kopieren/Speichern anzeigen",
+    "description": "Label for toast toggle"
+  },
+  "optionsToastDuration": {
+    "message": "Toast-Dauer (ms)",
+    "description": "Label for toast duration input"
+  },
+  "optionsFocusWait": {
+    "message": "Fokus-Wartezeit vor Zwischenablage (ms)",
+    "description": "Label for focus wait input"
+  },
+  "optionsSaveAs": {
+    "message": "Immer nach Speicherort fragen (\"Speichern unter\"-Dialog)",
+    "description": "Label for saveAs prompt toggle"
+  },
+  "optionsFetchCredentials": {
+    "message": "Anmeldeinformationen beim Laden von Bildern verwenden (hilft auf manchen Seiten)",
+    "description": "Label for fetch credentials toggle"
+  },
+  "optionsSaveButton": {
+    "message": "Speichern",
+    "description": "Save button text"
+  },
+  "optionsResetButton": {
+    "message": "Auf Standard zurücksetzen",
+    "description": "Reset settings button text"
+  },
+  "optionsSaved": {
+    "message": "Gespeichert.",
+    "description": "Status after saving"
+  },
+  "optionsResetDone": {
+    "message": "Standards wiederhergestellt.",
+    "description": "Status after reset"
+  },
+  "optionsLoading": {
+    "message": "Laden...",
+    "description": "Loading text"
+  },
+  "optionsFormat": {
+    "message": "Ausgabeformat",
+    "description": "Label for output format select"
+  },
+  "optionsJpegQuality": {
+    "message": "JPEG-Qualität (%)",
+    "description": "Label for jpeg quality"
+  },
+  "optionsResizeMax": {
+    "message": "Max. Abmessung (px, 0 = original)",
+    "description": "Label for resize max input"
+  },
+  "optionsFilenamePattern": {
+    "message": "Dateinamensmuster",
+    "description": "Label for filename pattern"
+  },
+  "optionsFormatHint": {
+    "message": "PNG ist verlustfrei, JPEG kleiner aber mit Verlust.",
+    "description": "Helper text for format choice"
+  },
+  "optionsJpegHint": {
+    "message": "70-90% reicht meist. Höher = größere Dateien. Transparente Bereiche werden weiß.",
+    "description": "Helper text for jpeg quality"
+  },
+  "optionsResizeHint": {
+    "message": "Maximale lange Kante in Pixeln. 0 behält Originalgröße.",
+    "description": "Helper text for resize"
+  },
+  "optionsPatternHint": {
+    "message": "Nutze {site}, {name}, {date}, {time}, {ext}. Beispiel: seite-image-2025-01-01.png",
+    "description": "Helper text for filename pattern"
+  },
+  "optionsLink": {
+    "message": "Einstellungen",
+    "description": "Link text to open options"
+  },
+  "donateTitle": {
+    "message": "Entwicklung unterstützen",
+    "description": "Donation section title"
+  },
+  "donateDescription": {
+    "message": "Gefällt Ihnen diese Erweiterung? Unterstützen Sie die Entwicklung:",
+    "description": "Donation description"
+  },
+  "donateButton": {
+    "message": "Über PayPal unterstützen",
+    "description": "Donate button text"
+  },
+  "donateButtonCompact": {
+    "message": "Unterstützen",
+    "description": "Compact donate button text"
+  },
+  "privacyBadge": {
+    "message": "100% offline • Keine Cloud • Deine Daten geschützt",
+    "description": "Privacy badge text"
+  },
+  "version": {
+    "message": "Version",
+    "description": "Version label"
+  },
+  "rateExtension": {
+    "message": "Bewerten",
+    "description": "Rate extension link text"
+  },
+  "popupTabHome": {
+    "message": "Startseite",
+    "description": "Home tab label"
+  },
+  "popupTabSettings": {
+    "message": "Einstellungen",
+    "description": "Settings tab label"
+  },
+  "quickFormatToggle": {
+    "message": "Schnellformat-Umschaltung",
+    "description": "Quick format toggle section title"
+  },
+  "quickFormatDescription": {
+    "message": "Sofort zwischen PNG und JPEG wechseln",
+    "description": "Quick format toggle description"
+  },
+  "currentFormat": {
+    "message": "Aktuelles Format",
+    "description": "Current format label"
+  },
+  "switchFormat": {
+    "message": "Wechseln zu",
+    "description": "Switch format button prefix"
+  },
+  "batchConvert": {
+    "message": "Batch-Konvertierung",
+    "description": "Batch convert button text"
+  },
+  "batchProFeature": {
+    "message": "In PRO verfügbar. Details: sic.opzozidev.com",
+    "description": "Batch feature PRO tooltip"
+  },
+  "proDetails": {
+    "message": "PRO-Version Details →",
+    "description": "Link text to PRO version details"
+  },
+  "helpTitle": {
+    "message": "Hilfe",
+    "description": "Help section title"
+  },
+  "dismissHelp": {
+    "message": "Schließen",
+    "description": "Dismiss help button"
+  },
+  "showHelp": {
+    "message": "Anweisungen anzeigen",
+    "description": "Show help button"
+  },
+  "outputFormatLabel": {
+    "message": "AUSGABEFORMAT",
+    "description": "Output format label above toggle"
+  },
+  "formatHint": {
+    "message": "Rechtsklick zum Speichern",
+    "description": "Hint text below format toggle"
+  }
+}
+
