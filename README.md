@@ -109,22 +109,22 @@ simple-image-converter/
 ├── package.json            # NPM dependencies
 ├── vite.config.js          # Vite build configuration
 ├── CHANGELOG.md            # Version history
-├── FEATURES.md             # Detailed feature documentation
+├── FEATURES.md             # Feature documentation
 └── PRIVACY.md              # Privacy policy
 ```
 
 ### Documentation
 
-- **[FEATURES.md](FEATURES.md)** — Complete feature documentation
-- **[CHANGELOG.md](CHANGELOG.md)** — Version history and changes
+- **[FEATURES.md](FEATURES.md)** — Feature documentation
+- **[CHANGELOG.md](CHANGELOG.md)** — Version history
 
 ### Contributing
 
-Pull requests welcome. Found a bug? Open an issue.
+Pull requests are welcome for the free edition. Found a bug? [Open an issue](https://github.com/opzozi/simple-image-converter/issues).
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Licensed under the MIT License — see [LICENSE](LICENSE).
 
 ## Issues
 

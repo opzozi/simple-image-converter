@@ -63,6 +63,14 @@
     "message": "Save failed",
     "description": "Toast shown on save error"
   },
+  "pageRestrictedCopy": {
+    "message": "Chrome doesn't allow copying on this page. Use Save, or try a regular website.",
+    "description": "Shown when copy is blocked on a Chrome-protected page"
+  },
+  "pageRestrictedSave": {
+    "message": "Chrome protects this page, so the image couldn't be saved here.",
+    "description": "Shown when save fails because the page is Chrome-protected"
+  },
   "optionsTitle": {
     "message": "Settings",
     "description": "Options page title"
@@ -152,7 +160,7 @@
     "description": "Helper text for format choice"
   },
   "optionsJpegHint": {
-    "message": "70-90% is usually enough. Higher = larger files.",
+    "message": "70-90% is usually enough. Higher = larger files. Transparent areas become white.",
     "description": "Helper text for jpeg quality"
   },
   "optionsResizeHint": {
@@ -223,21 +231,13 @@
     "message": "Batch Convert",
     "description": "Batch convert button text"
   },
-  "batchComingSoon": {
-    "message": "Coming soon: convert local files",
-    "description": "Batch feature coming soon tooltip"
-  },
   "batchProFeature": {
-    "message": "Coming soon in Pro version. Details: sic.opzozidev.com",
-    "description": "Batch feature pro version tooltip"
+    "message": "Available in PRO. Details: sic.opzozidev.com",
+    "description": "Batch feature PRO tooltip"
   },
   "proDetails": {
-    "message": "Pro version details →",
-    "description": "Link text to pro version details"
-  },
-  "comingSoon": {
-    "message": "Soon",
-    "description": "Coming soon badge text"
+    "message": "PRO version details →",
+    "description": "Link text to PRO version details"
   },
   "helpTitle": {
     "message": "Help",

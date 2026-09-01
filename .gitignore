@@ -3,10 +3,17 @@ dist/
 *.log
 .DS_Store
 *.local
-PROJECT_STATUS.md
 temp-release-*/
+exports/
 *.zip
+!release/*.zip
 *.crx
 *.pem
 .env
 .env.local
+*.key
+*.secret
+
+# Local notes and status files
+PROJECT_STATUS.md
+LOCAL_NOTES.md
