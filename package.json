@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite build --watch --mode development",
     "build": "vite build && node postbuild.js && node build-extension.js",
+    "release": "npm run build && bash create-release.sh",
     "preview": "vite preview"
   },
   "dependencies": {

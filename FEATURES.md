@@ -159,9 +159,7 @@ All UI elements, error messages, and toasts are localized.
 
 ## Licensing
 
-- **Free edition:** MIT License — see [LICENSE](LICENSE)
-- **PRO edition:** Proprietary — see [PRO_LICENSE.md](PRO_LICENSE.md)
-- **Repository split:** See [docs/REPOSITORY-STRATEGY.md](docs/REPOSITORY-STRATEGY.md)
+Licensed under the MIT License — see [LICENSE](LICENSE).
 
 ## Future Enhancements (Potential)
 

@@ -69,8 +69,6 @@ User Right-Click → Context Menu → Service Worker (background.js)
 - **`offscreen`** — Access Canvas API for conversion
 - **`<all_urls>`** — Load images from any website (CORS handling)
 
-This repository contains the **free MIT-licensed** extension. PRO features (batch conversion, license checks) are proprietary and are **not** included here.
-
 [Read our Privacy Policy](PRIVACY.md)
 
 ## Supported Languages
@@ -112,8 +110,6 @@ simple-image-converter/
 ├── vite.config.js          # Vite build configuration
 ├── CHANGELOG.md            # Version history
 ├── FEATURES.md             # Feature documentation
-├── PRO_LICENSE.md          # PRO license (reference; PRO code is private)
-├── docs/REPOSITORY-STRATEGY.md
 └── PRIVACY.md              # Privacy policy
 ```
 
@@ -121,8 +117,6 @@ simple-image-converter/
 
 - **[FEATURES.md](FEATURES.md)** — Feature documentation
 - **[CHANGELOG.md](CHANGELOG.md)** — Version history
-- **[docs/REPOSITORY-STRATEGY.md](docs/REPOSITORY-STRATEGY.md)** — Free vs PRO repository split
-- **[PRO_LICENSE.md](PRO_LICENSE.md)** — PRO edition license (reference only; PRO source is not in this repo)
 
 ### Contributing
 
@@ -130,19 +124,7 @@ Pull requests are welcome for the free edition. Found a bug? [Open an issue](htt
 
 ## License
 
-### Free edition (this repository)
-
 Licensed under the MIT License — see [LICENSE](LICENSE).
-
-You may use, modify, and distribute the free source code under the MIT terms.
-
-### PRO edition (not in this repository)
-
-PRO features (batch conversion, license activation, and related code) are **proprietary** and distributed separately under [PRO_LICENSE.md](PRO_LICENSE.md).
-
-PRO source code belongs in a **private repository**, not in this public MIT repo. Store builds that include PRO are produced from the private tree. See [docs/REPOSITORY-STRATEGY.md](docs/REPOSITORY-STRATEGY.md).
-
-For PRO licensing: opzozi@gmail.com
 
 ## Issues
 

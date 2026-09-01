@@ -1,10 +1,9 @@
 # Changelog
 
 ## 1.3.3 (2026-09-01)
-- **Licensing:** Added [PRO_LICENSE.md](PRO_LICENSE.md) and [docs/REPOSITORY-STRATEGY.md](docs/REPOSITORY-STRATEGY.md) for the free/PRO repository split
 - **Settings:** Saving output format from the options page now updates the context menu immediately
-- **Locales:** Replaced "Coming soon" PRO strings with product-ready wording (EN/DE/HU)
-- **Cleanup:** Expanded `.gitignore` for PRO-only files and secrets; removed unused locale keys
+- **Locales:** Updated batch feature tooltip strings (EN/DE/HU)
+- **Cleanup:** Removed export artifacts and internal documentation not needed in the public repository
 
 ## 1.3.2 (2026-08-17)
 - **JPEG transparency**: Transparent pixels are composited onto a white background before JPEG export (PNG is unchanged)
