@@ -80,8 +80,13 @@ async function writeDataUrlToClipboard(dataUrl, format, opts) {
       throw new Error('Invalid blob data');
     }
     
-    const clipboardItem = new ClipboardItem({ [targetMime]: finalBlob });
-    await navigator.clipboard.write([clipboardItem]);
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ [targetMime]: finalBlob })]);
+    } catch (writeErr) {
+      if (targetMime === 'image/png') throw writeErr;
+      const pngBlob = await convertBlobToFormat(finalBlob, 'png');
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+    }
   } catch (err) {
     if (err.name === 'NotAllowedError' || err.message?.includes('permission')) {
       throw new Error('Permission denied - try clicking on the page first');
@@ -141,7 +146,8 @@ function showToast(text, isError, durationMs) {
   toast.style.maxWidth = '400px';
   toast.style.wordWrap = 'break-word';
   toast.style.whiteSpace = 'normal';
-  document.body.appendChild(toast);
+  const host = document.body || document.documentElement;
+  host.appendChild(toast);
   setTimeout(() => toast.remove(), durationMs);
 }
 
@@ -178,6 +184,10 @@ async function convertBlobToFormat(blob, format) {
   if (typeof OffscreenCanvas !== 'undefined') {
     const canvas = new OffscreenCanvas(bmp.width, bmp.height);
     const ctx = canvas.getContext('2d');
+    if (format === 'jpeg') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, bmp.width, bmp.height);
+    }
     ctx.drawImage(bmp, 0, 0);
     const convertedBlob = await canvas.convertToBlob({ 
       type: targetMime,
@@ -190,6 +200,10 @@ async function convertBlobToFormat(blob, format) {
     canvas.width = bmp.width;
     canvas.height = bmp.height;
     const ctx = canvas.getContext('2d');
+    if (format === 'jpeg') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, bmp.width, bmp.height);
+    }
     ctx.drawImage(bmp, 0, 0);
     return new Promise((resolve, reject) => {
       canvas.toBlob(

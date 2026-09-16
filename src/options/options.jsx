@@ -105,6 +105,9 @@ function OptionsApp() {
     };
 
     await storage.set(payload);
+    if (payload.outputFormat) {
+      chrome.runtime.sendMessage({ type: 'FORMAT_CHANGED', format: payload.outputFormat });
+    }
     setStatus(t('optionsSaved', 'Saved.'));
     setTimeout(() => setStatus(''), 1500);
   }
@@ -114,13 +117,13 @@ function OptionsApp() {
     const systemDark = normalized.darkMode !== undefined ? normalized.darkMode : getSystemDarkMode();
     setSettings(normalized);
     setDarkMode(systemDark);
-    await storage.set(normalized);
+    await storage.set({ ...normalized, darkMode: systemDark });
     setStatus(t('optionsResetDone', 'Defaults restored.'));
     setTimeout(() => setStatus(''), 1500);
   }
 
   if (!settings) {
-    return <div>Loading...</div>;
+    return <div>{t('optionsLoading', 'Loading...')}</div>;
   }
 
   return (

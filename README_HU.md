@@ -73,7 +73,7 @@ Tetszik a bővítmény? Segíthetsz:
 
 ## Licenc
 
-Ez a projekt MIT License alatt van - lásd a [LICENSE](LICENSE) fájlt a részletekért.
+MIT License — lásd a [LICENSE](LICENSE) fájlt.
 
 ## Problémák
 

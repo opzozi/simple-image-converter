@@ -1,62 +1,38 @@
-// Chrome only - use chrome API
 const browserAPI = chrome;
 
 let creating;
 let menuReadyPromise = null;
+let badgeTimer = null;
 
 async function createContextMenus() {
   try {
     await browserAPI.contextMenus.removeAll();
-    // Small delay to ensure removeAll completes
-    await new Promise(resolve => setTimeout(resolve, 50));
   } catch (_) {
     // ignore
   }
 
-  // Remove individual items if they exist (more reliable than removeAll)
-  try {
-    await browserAPI.contextMenus.remove('save-image-as-png');
-  } catch (_) {
-    // Item doesn't exist, which is fine
-  }
-  try {
-    await browserAPI.contextMenus.remove('copy-image-as-png');
-  } catch (_) {
-    // Item doesn't exist, which is fine
-  }
-  
-  // Small delay before creating new items
-  await new Promise(resolve => setTimeout(resolve, 50));
-  
-  // Create menu items with error handling
   return new Promise((resolve) => {
     let created = 0;
     const checkComplete = () => {
       created++;
       if (created === 2) resolve();
     };
-    
+
     browserAPI.contextMenus.create({
       id: 'save-image-as-png',
       title: browserAPI.i18n.getMessage('contextMenuTitle'),
       contexts: ['image']
     }, () => {
-      const err = browserAPI.runtime.lastError;
-      if (err && !err.message.includes('duplicate')) {
-        console.warn('Failed to create save-image-as-png menu:', err.message);
-      }
+      void browserAPI.runtime.lastError;
       checkComplete();
     });
-    
+
     browserAPI.contextMenus.create({
       id: 'copy-image-as-png',
       title: browserAPI.i18n.getMessage('contextMenuCopyTitle'),
       contexts: ['image']
     }, () => {
-      const err = browserAPI.runtime.lastError;
-      if (err && !err.message.includes('duplicate')) {
-        console.warn('Failed to create copy-image-as-png menu:', err.message);
-      }
+      void browserAPI.runtime.lastError;
       checkComplete();
     });
   });
@@ -72,7 +48,6 @@ async function ensureMenusReady() {
   return menuReadyPromise;
 }
 
-// Ensure menus exist whenever the worker starts
 ensureMenusReady();
 
 browserAPI.runtime.onInstalled.addListener(async () => {
@@ -88,21 +63,17 @@ browserAPI.runtime.onStartup?.addListener(async () => {
 });
 
 browserAPI.contextMenus.onClicked.addListener((info, tab) => {
+  const imageUrl = info.srcUrl;
+  const pageUrl = tab?.url || info.pageUrl || '';
+  if (!imageUrl) return;
   if (info.menuItemId === 'save-image-as-png') {
-    const imageUrl = info.srcUrl;
-    const pageUrl = tab?.url || info.pageUrl || '';
-    if (imageUrl && isHttpLike(tab?.url)) {
-      convertAndDownloadImage(imageUrl, pageUrl);
-    }
+    convertAndDownloadImage(imageUrl, pageUrl, tab);
   } else if (info.menuItemId === 'copy-image-as-png') {
-    const imageUrl = info.srcUrl;
-    if (imageUrl && isHttpLike(tab?.url)) {
-      copyImageToClipboard(imageUrl, tab?.id);
-    }
+    copyImageToClipboard(imageUrl, tab);
   }
 });
 
-browserAPI.storage.onChanged.addListener(async (changes, area) => {
+browserAPI.storage.onChanged.addListener((changes, area) => {
   if (area !== 'sync' && area !== 'local') return;
   if (changes.outputFormat) {
     updateContextMenuTitles(changes.outputFormat.newValue);
@@ -114,7 +85,7 @@ browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
     updateContextMenuTitles(message.format);
     sendResponse({ success: true });
   }
-  return true;
+  return false;
 });
 
 const defaultSettings = {
@@ -130,29 +101,27 @@ const defaultSettings = {
 };
 
 async function getSettings() {
-  const storage = browserAPI.storage.sync;
-  const stored = await storage.get(Object.keys(defaultSettings));
+  const stored = await browserAPI.storage.sync.get(Object.keys(defaultSettings));
   return normalizeSettings({ ...defaultSettings, ...stored });
 }
 
 function updateContextMenuTitles(fmt) {
-  const fmtLabel = (fmt === 'jpeg' ? 'JPEG' : fmt === 'webp' ? 'WEBP' : 'PNG');
+  const fmtLabel = fmt === 'jpeg' ? 'JPEG' : 'PNG';
   const saveTitle = `${browserAPI.i18n.getMessage('contextMenuTitle') || 'Save image'} (${fmtLabel})`;
   const copyTitle = `${browserAPI.i18n.getMessage('contextMenuCopyTitle') || 'Copy image'} (${fmtLabel})`;
   const applyTitles = async () => {
     await ensureMenusReady();
     try {
-      browserAPI.contextMenus.update('save-image-as-png', { title: saveTitle });
-      browserAPI.contextMenus.update('copy-image-as-png', { title: copyTitle });
-    } catch (err) {
-      // If menus are missing, recreate and retry once
+      await browserAPI.contextMenus.update('save-image-as-png', { title: saveTitle });
+      await browserAPI.contextMenus.update('copy-image-as-png', { title: copyTitle });
+    } catch (_) {
       menuReadyPromise = null;
       await ensureMenusReady();
       try {
-        browserAPI.contextMenus.update('save-image-as-png', { title: saveTitle });
-        browserAPI.contextMenus.update('copy-image-as-png', { title: copyTitle });
+        await browserAPI.contextMenus.update('save-image-as-png', { title: saveTitle });
+        await browserAPI.contextMenus.update('copy-image-as-png', { title: copyTitle });
       } catch (_) {
-        // give up silently
+        // Menus could not be updated; they will refresh on the next worker start.
       }
     }
   };
@@ -172,78 +141,102 @@ function normalizeSettings(raw) {
   normalized.filenamePattern = typeof normalized.filenamePattern === 'string' && normalized.filenamePattern.trim()
     ? normalized.filenamePattern
     : defaultSettings.filenamePattern;
-  updateContextMenuTitles(normalized.outputFormat);
   return normalized;
 }
 
-async function convertAndDownloadImage(imageUrl, pageUrl = '') {
+function tMsg(key, fallback) {
+  return browserAPI.i18n.getMessage(key) || fallback;
+}
+
+async function convertAndDownloadImage(imageUrl, pageUrl = '', tab) {
+  const settings = await getSettings();
+  const tabInfo = tab || { id: await getActiveTabId(), url: pageUrl };
+  const restrictedMsg = tMsg(
+    'pageRestrictedSave',
+    "Chrome protects this page, so the image couldn't be saved here."
+  );
+
   try {
-    const settings = await getSettings();
-    const targetTabId = await getActiveTabId();
+    if (!isFetchableImageUrl(imageUrl) && isRestrictedPage(pageUrl)) {
+      notifyUser(false, restrictedMsg, settings, tabInfo);
+      return;
+    }
+
     const response = await convertImageWithFallback(imageUrl, {
       fetchWithCredentials: !!settings.fetchWithCredentials,
       format: settings.outputFormat,
       jpegQuality: settings.jpegQuality,
       resizeMax: settings.resizeMax
-    }, targetTabId);
-    
-    if (response.success) {
-      const filename = getFilenameFromUrl(imageUrl, pageUrl, settings.outputFormat, settings.filenamePattern);
-      browserAPI.downloads.download(
-        {
-          url: response.dataUrl,
-          filename: filename,
-          saveAs: !!settings.saveAsPrompt
-        },
-        downloadId => {
-          const dlErr = browserAPI.runtime.lastError;
-          if (dlErr) {
-            if (settings.toastEnabled) {
-              const isCancelled = dlErr.message && (
-                dlErr.message.includes('USER_CANCELLED') || 
-                dlErr.message.includes('USER_Cancelled') ||
-                dlErr.message.includes('canceled')
-              );
-              const message = isCancelled
-                ? (browserAPI.i18n.getMessage('saveCancelledToast') || 'Save cancelled')
-                : (browserAPI.i18n.getMessage('saveErrorToast') || dlErr.message || 'Download failed.');
-              sendToastToActive(false, message);
-            }
-            return;
-          }
-          if (!settings.toastEnabled || !downloadId) return;
+    }, tabInfo.id, pageUrl);
 
-          const onChanged = delta => {
-            if (delta.id !== downloadId) return;
-            if (delta.state && delta.state.current === 'complete') {
-              sendToastToActive(true, browserAPI.i18n.getMessage('saveSuccessToast') || 'Saved.', settings);
-              browserAPI.downloads.onChanged.removeListener(onChanged);
-            } else if (delta.error && delta.error.current) {
-              const errorCode = delta.error.current;
-              const isCancelled = errorCode === 'USER_CANCELLED' || errorCode === 'USER_Cancelled';
-              const message = isCancelled
-                ? (browserAPI.i18n.getMessage('saveCancelledToast') || 'Save cancelled')
-                : (browserAPI.i18n.getMessage('saveErrorToast') || errorCode || 'Download failed.');
-              sendToastToActive(false, message, settings);
-              browserAPI.downloads.onChanged.removeListener(onChanged);
-            }
-          };
-          browserAPI.downloads.onChanged.addListener(onChanged);
-        }
-      );
-    } else {
-      const errorMsg = response.error || 'Conversion failed';
-      sendToastToActive(false, browserAPI.i18n.getMessage('saveErrorToast') || errorMsg, settings);
+    if (!response.success) {
+      notifyUser(false, isRestrictedPage(pageUrl) ? restrictedMsg : (tMsg('saveErrorToast', 'Save failed')), settings, tabInfo);
+      return;
     }
+
+    const filename = getFilenameFromUrl(imageUrl, pageUrl, settings.outputFormat, settings.filenamePattern);
+    browserAPI.downloads.download(
+      {
+        url: response.dataUrl,
+        filename,
+        saveAs: !!settings.saveAsPrompt
+      },
+      downloadId => {
+        const dlErr = browserAPI.runtime.lastError;
+        if (dlErr) {
+          const isCancelled = dlErr.message && /cancel/i.test(dlErr.message);
+          const message = isCancelled
+            ? tMsg('saveCancelledToast', 'Save cancelled')
+            : (tMsg('saveErrorToast', 'Save failed') || dlErr.message);
+          notifyUser(false, message, settings, tabInfo);
+          return;
+        }
+        if (!downloadId) return;
+
+        const onChanged = delta => {
+          if (delta.id !== downloadId) return;
+          if (delta.state && delta.state.current === 'complete') {
+            notifyUser(true, tMsg('saveSuccessToast', 'Saved.'), settings, tabInfo);
+            browserAPI.downloads.onChanged.removeListener(onChanged);
+          } else if (delta.error && delta.error.current) {
+            const errorCode = delta.error.current;
+            const isCancelled = errorCode === 'USER_CANCELLED' || errorCode === 'USER_Cancelled';
+            const message = isCancelled
+              ? tMsg('saveCancelledToast', 'Save cancelled')
+              : (tMsg('saveErrorToast', 'Save failed') || errorCode);
+            notifyUser(false, message, settings, tabInfo);
+            browserAPI.downloads.onChanged.removeListener(onChanged);
+          }
+        };
+        browserAPI.downloads.onChanged.addListener(onChanged);
+      }
+    );
   } catch (error) {
-    const settings = await getSettings();
-    sendToastToActive(false, browserAPI.i18n.getMessage('saveErrorToast') || error.message || 'Download failed.', settings);
+    notifyUser(
+      false,
+      isRestrictedPage(pageUrl) ? restrictedMsg : (tMsg('saveErrorToast', 'Save failed') || error.message),
+      settings,
+      tabInfo
+    );
   }
 }
 
-async function copyImageToClipboard(imageUrl, tabId) {
+async function copyImageToClipboard(imageUrl, tab) {
+  const settings = await getSettings();
+  const tabId = tab?.id ?? (await getActiveTabId());
+  const tabUrl = tab?.url || (await getTabUrl(tabId));
+  const tabInfo = { id: tabId, url: tabUrl };
+  const restrictedMsg = tMsg(
+    'pageRestrictedCopy',
+    "Chrome doesn't allow copying on this page. Use Save, or try a regular website."
+  );
+
   try {
-    const settings = await getSettings();
+    if (!isFetchableImageUrl(imageUrl) && isRestrictedPage(tabUrl)) {
+      notifyUser(false, restrictedMsg, settings, tabInfo);
+      return;
+    }
+
     const convertResponse = await convertImageWithFallback(
       imageUrl,
       {
@@ -252,30 +245,17 @@ async function copyImageToClipboard(imageUrl, tabId) {
         jpegQuality: settings.jpegQuality,
         resizeMax: settings.resizeMax
       },
-      tabId
+      tabId,
+      tabUrl
     );
 
     if (!convertResponse?.success || !convertResponse.dataUrl) {
-      sendToastToActive(false, browserAPI.i18n.getMessage('copyErrorToast') || convertResponse?.error || 'Copy failed.', settings);
+      notifyUser(false, isRestrictedPage(tabUrl) ? restrictedMsg : tMsg('copyErrorToast', 'Copy failed.'), settings, tabInfo);
       return;
     }
 
-    const targetTabId = tabId ?? (await getActiveTabId());
-    if (!targetTabId) {
-      sendToastToActive(false, browserAPI.i18n.getMessage('copyErrorToast') || 'No active tab available.', settings);
-      return;
-    }
-
-    try {
-      await ensureContentScript(targetTabId);
-      await new Promise(resolve => setTimeout(resolve, 100));
-    } catch (err) {
-      // Content script may already be loaded
-    }
-
-    browserAPI.tabs.sendMessage(
-      targetTabId,
-      {
+    if (await canUseContentScript(tabId, tabUrl)) {
+      const response = await tabsSendMessage(tabId, {
         type: 'COPY_IMAGE_DATA',
         dataUrl: convertResponse.dataUrl,
         format: settings.outputFormat,
@@ -284,26 +264,29 @@ async function copyImageToClipboard(imageUrl, tabId) {
           toastDurationMs: settings.toastDurationMs,
           focusWaitMs: settings.focusWaitMs,
         }
-      },
-      response => {
-        const err = browserAPI.runtime.lastError;
-        if (err) {
-          sendToastToActive(false, `${browserAPI.i18n.getMessage('copyErrorToast') || 'Copy failed'}: ${err.message}`, settings);
-          return;
-        }
-        if (!response || !response.success) {
-          const errorMsg = response?.error || 'Copy failed';
-          const baseMsg = browserAPI.i18n.getMessage('copyErrorToast') || 'Copy failed';
-          const fullMsg = errorMsg && errorMsg !== 'Copy failed' 
-            ? `${baseMsg}: ${errorMsg}` 
-            : baseMsg;
-          sendToastToActive(false, fullMsg, settings);
-        }
+      });
+      if (response?.success) return;
+      if (response && !response.success) {
+        const errorMsg = response.error || 'Copy failed';
+        const baseMsg = tMsg('copyErrorToast', 'Copy failed');
+        notifyUser(false, errorMsg !== 'Copy failed' ? `${baseMsg}: ${errorMsg}` : baseMsg, settings, tabInfo);
+        return;
       }
-    );
+    }
+
+    try {
+      await copyViaOffscreen(convertResponse.dataUrl, settings.outputFormat);
+      notifyUser(true, tMsg('copySuccessToast', 'Image copied'), settings, tabInfo);
+    } catch (_) {
+      notifyUser(false, restrictedMsg, settings, tabInfo);
+    }
   } catch (error) {
-    const settings = await getSettings();
-    sendToastToActive(false, browserAPI.i18n.getMessage('copyErrorToast') || error.message || 'Copy failed.', settings);
+    notifyUser(
+      false,
+      isRestrictedPage(tabUrl) ? restrictedMsg : (tMsg('copyErrorToast', 'Copy failed.') || error.message),
+      settings,
+      tabInfo
+    );
   }
 }
 
@@ -312,34 +295,55 @@ async function getActiveTabId() {
   return activeTab?.id;
 }
 
-async function convertImageWithFallback(imageUrl, opts, tabId) {
-  // Check if offscreen API is available
+async function getTabUrl(tabId) {
+  if (!tabId) return '';
+  try {
+    const tab = await browserAPI.tabs.get(tabId);
+    return tab?.url || '';
+  } catch (_) {
+    return '';
+  }
+}
+
+function blobToDataUrl(blob) {
+  return blob.arrayBuffer().then(arrayBuffer => {
+    const uint8Array = new Uint8Array(arrayBuffer);
+    const chunkSize = 0x8000;
+    const binaryParts = [];
+    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+      const chunk = uint8Array.subarray(i, i + chunkSize);
+      binaryParts.push(String.fromCharCode.apply(null, Array.from(chunk)));
+    }
+    const mimeType = blob.type || 'image/png';
+    return `data:${mimeType};base64,${btoa(binaryParts.join(''))}`;
+  });
+}
+
+async function convertImageWithFallback(imageUrl, opts, tabId, tabUrl) {
   const hasOffscreen = browserAPI.offscreen && typeof browserAPI.offscreen.createDocument === 'function';
-  
   let offscreenResult;
+
   if (hasOffscreen) {
     try {
-      // Add timeout to offscreen conversion (3 seconds)
       offscreenResult = await Promise.race([
         convertImageUniversal(imageUrl, opts),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Offscreen conversion timeout')), 3000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Offscreen conversion timeout')), 10000))
       ]);
       if (offscreenResult?.success && offscreenResult?.dataUrl) {
         return offscreenResult;
       }
-    } catch (err) {
-      // Offscreen failed or timed out, will try fallback
+    } catch (_) {
+      // Continue with the in-tab fallback on pages that allow scripts.
     }
   }
-  
-  // Fallback: Background script downloads image (no CORS), converts to Base64, then tab script does canvas conversion
+
   const targetTabId = tabId ?? (await getActiveTabId());
-  if (!targetTabId) {
-    throw new Error(offscreenResult?.error || 'No active tab available for fallback conversion');
+  const targetTabUrl = tabUrl || (await getTabUrl(targetTabId));
+  if (!targetTabId || !canInjectIntoTab(targetTabUrl)) {
+    throw new Error(offscreenResult?.error || 'Conversion failed');
   }
-  
+
   try {
-    // Step 1: Background script fetches image (no CORS restriction here)
     const fetchResponse = await fetch(imageUrl, {
       credentials: opts.fetchWithCredentials ? 'include' : 'omit'
     });
@@ -347,22 +351,8 @@ async function convertImageWithFallback(imageUrl, opts, tabId) {
       throw new Error('Fetch failed: ' + fetchResponse.status);
     }
     const blob = await fetchResponse.blob();
-    
-    // Step 2: Convert blob to Base64 in background script (Service Worker compatible)
-    const arrayBuffer = await blob.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    const chunkSize = 0x8000;
-    let binaryParts = [];
-    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-      const chunk = uint8Array.subarray(i, i + chunkSize);
-      binaryParts.push(String.fromCharCode.apply(null, Array.from(chunk)));
-    }
-    const binary = binaryParts.join('');
-    const base64 = btoa(binary);
-    const mimeType = blob.type || 'image/png';
-    const base64DataUrl = `data:${mimeType};base64,${base64}`;
-    
-    // Step 3: Send Base64 to tab script for canvas conversion (no CORS issue with Base64)
+    const base64DataUrl = await blobToDataUrl(blob);
+
     const [result] = await browserAPI.scripting.executeScript({
       target: { tabId: targetTabId },
       func: async (base64Url, options) => {
@@ -373,7 +363,7 @@ async function convertImageWithFallback(imageUrl, opts, tabId) {
             img.onerror = reject;
             img.src = base64Url;
           });
-          
+
           const canvas = document.createElement('canvas');
           let w = img.width;
           let h = img.height;
@@ -385,10 +375,16 @@ async function convertImageWithFallback(imageUrl, opts, tabId) {
           canvas.width = w;
           canvas.height = h;
           const ctx = canvas.getContext('2d');
+          if (options.format === 'jpeg') {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+          }
           ctx.drawImage(img, 0, 0, w, h);
           const mime = options.format === 'jpeg' ? 'image/jpeg' : 'image/png';
-          const dataUrl = canvas.toDataURL(mime, options.format === 'jpeg' ? options.jpegQuality : undefined);
-          return { success: true, dataUrl };
+          return {
+            success: true,
+            dataUrl: canvas.toDataURL(mime, options.format === 'jpeg' ? options.jpegQuality : undefined)
+          };
         } catch (e) {
           return { success: false, error: e.message || 'Fallback conversion failed' };
         }
@@ -398,33 +394,97 @@ async function convertImageWithFallback(imageUrl, opts, tabId) {
     if (result?.result?.success) return result.result;
     throw new Error(result?.result?.error || offscreenResult?.error || 'Conversion failed');
   } catch (fallbackErr) {
-    throw new Error(fallbackErr.message || offscreenResult?.error || 'Both offscreen and fallback conversion failed');
+    throw new Error(fallbackErr.message || offscreenResult?.error || 'Conversion failed');
   }
 }
 
-async function ensureContentScript(tabId) {
-  if (!tabId) return;
+function tabsSendMessage(tabId, message) {
+  return new Promise(resolve => {
+    try {
+      browserAPI.tabs.sendMessage(tabId, message, response => {
+        if (browserAPI.runtime.lastError) {
+          resolve(null);
+          return;
+        }
+        resolve(response || null);
+      });
+    } catch (_) {
+      resolve(null);
+    }
+  });
+}
+
+async function ensureContentScript(tabId, tabUrl) {
+  if (!tabId || !canInjectIntoTab(tabUrl)) return false;
   try {
     await browserAPI.scripting.executeScript({
       target: { tabId },
       files: ['copy-helper.js']
     });
     await new Promise(resolve => setTimeout(resolve, 50));
-  } catch (err) {
-    // Content script may already be loaded via manifest
+    return true;
+  } catch (_) {
+    return false;
   }
 }
 
+async function canUseContentScript(tabId, tabUrl) {
+  if (!tabId || !canInjectIntoTab(tabUrl)) return false;
+  const ping = await tabsSendMessage(tabId, { type: 'PING' });
+  if (ping?.pong) return true;
+  if (!(await ensureContentScript(tabId, tabUrl))) return false;
+  const retry = await tabsSendMessage(tabId, { type: 'PING' });
+  return !!retry?.pong;
+}
 
 function isHttpLike(url) {
   return typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'));
+}
+
+function isFetchableImageUrl(url) {
+  return typeof url === 'string' && (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
+    url.startsWith('data:')
+  );
+}
+
+function isRestrictedPage(url) {
+  if (!url || typeof url !== 'string') return false;
+  const lower = url.toLowerCase();
+  if (
+    lower.startsWith('chrome://') ||
+    lower.startsWith('chrome-extension://') ||
+    lower.startsWith('chrome-search://') ||
+    lower.startsWith('chrome-untrusted://') ||
+    lower.startsWith('devtools://') ||
+    lower.startsWith('edge://') ||
+    lower.startsWith('about:') ||
+    lower.startsWith('view-source:') ||
+    lower.startsWith('moz-extension://')
+  ) {
+    return true;
+  }
+  if (!isHttpLike(url)) return true;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === 'chrome.google.com' ||
+      host === 'chromewebstore.google.com' ||
+      host.endsWith('.chrome.google.com');
+  } catch (_) {
+    return true;
+  }
+}
+
+function canInjectIntoTab(url) {
+  return isHttpLike(url) && !isRestrictedPage(url);
 }
 
 async function convertImageUniversal(imageUrl, opts = {}) {
   await setupOffscreenDocument();
   return await browserAPI.runtime.sendMessage({
     type: 'CONVERT_IMAGE',
-    imageUrl: imageUrl,
+    imageUrl,
     fetchWithCredentials: opts.fetchWithCredentials,
     format: opts.format,
     jpegQuality: opts.jpegQuality,
@@ -432,25 +492,43 @@ async function convertImageUniversal(imageUrl, opts = {}) {
   });
 }
 
+async function copyViaOffscreen(dataUrl, format) {
+  await setupOffscreenDocument();
+  return await new Promise((resolve, reject) => {
+    browserAPI.runtime.sendMessage({
+      type: 'COPY_DATAURL_TO_CLIPBOARD',
+      dataUrl,
+      format
+    }, response => {
+      const err = browserAPI.runtime.lastError;
+      if (err) {
+        reject(new Error(err.message));
+        return;
+      }
+      if (response?.success) {
+        resolve(true);
+        return;
+      }
+      reject(new Error(response?.error || 'Clipboard write failed'));
+    });
+  });
+}
+
 async function setupOffscreenDocument() {
-  if (!browserAPI.offscreen) {
-    return;
-  }
-  
-  if (await browserAPI.offscreen.hasDocument()) {
-    return;
-  }
-  
+  if (!browserAPI.offscreen) return;
+  if (await browserAPI.offscreen.hasDocument()) return;
   if (creating) {
     await creating;
-  } else {
-    creating = browserAPI.offscreen.createDocument({
-      url: 'offscreen.html',
-      reasons: ['BLOBS'],
-      justification: 'Convert images to PNG format using Canvas API'
-    });
-    
+    return;
+  }
+  creating = browserAPI.offscreen.createDocument({
+    url: 'offscreen.html',
+    reasons: ['BLOBS', 'CLIPBOARD'],
+    justification: 'Convert images with Canvas and copy the result to the clipboard'
+  });
+  try {
     await creating;
+  } finally {
     creating = null;
   }
 }
@@ -469,22 +547,18 @@ function getFilenameFromUrl(imageUrl, pageUrl, fmt, pattern) {
     if (pageUrl && isHttpLike(pageUrl)) {
       try {
         const pageUrlObj = new URL(pageUrl);
-        const imageUrlObj = new URL(imageUrl);
         if (pageUrlObj.hostname !== imageUrlObj.hostname || pageUrl !== imageUrl) {
           siteUrl = pageUrl;
         }
-      } catch (e) {
+      } catch (_) {
         siteUrl = imageUrl;
       }
     }
-    
-    if (!siteUrl) {
-      siteUrl = imageUrl;
-    }
+
+    if (!siteUrl) siteUrl = imageUrl;
 
     const urlObj = new URL(siteUrl);
     let hostname = urlObj.hostname || 'site';
-    
     hostname = hostname
       .replace(/^www\./i, '')
       .replace(/^m\./i, '')
@@ -493,19 +567,20 @@ function getFilenameFromUrl(imageUrl, pageUrl, fmt, pattern) {
       .replace(/^media\./i, '')
       .replace(/^img\./i, '')
       .replace(/^images?\./i, '');
-    
+
     const siteShort = getBaseDomain(hostname);
     const site = hostname;
-
     const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    const hh = String(now.getHours()).padStart(2, '0');
-    const mi = String(now.getMinutes()).padStart(2, '0');
-    const ss = String(now.getSeconds()).padStart(2, '0');
-    const dateStr = `${yyyy}-${mm}-${dd}`;
-    const timeStr = `${hh}-${mi}-${ss}`;
+    const dateStr = [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, '0'),
+      String(now.getDate()).padStart(2, '0')
+    ].join('-');
+    const timeStr = [
+      String(now.getHours()).padStart(2, '0'),
+      String(now.getMinutes()).padStart(2, '0'),
+      String(now.getSeconds()).padStart(2, '0')
+    ].join('-');
 
     const pat = typeof pattern === 'string' && pattern.trim()
       ? pattern
@@ -518,13 +593,9 @@ function getFilenameFromUrl(imageUrl, pageUrl, fmt, pattern) {
       .replace(/\{time\}/g, timeStr)
       .replace(/\{ext\}/g, ext);
 
-    if (!filename.endsWith(`.${ext}`)) {
-      filename += `.${ext}`;
-    }
-    
+    if (!filename.endsWith(`.${ext}`)) filename += `.${ext}`;
     return filename;
-  } catch (error) {
-    // Error parsing URL
+  } catch (_) {
     return fmt === 'jpeg' ? 'image.jpg' : 'image.png';
   }
 }
@@ -538,33 +609,62 @@ function clamp(val, min, max) {
 function getBaseDomain(host) {
   if (!host) return '';
   const parts = host.split('.').filter(Boolean);
-  if (parts.length === 0) return '';
-  if (parts.length === 1) return parts[0];
-  if (parts.length === 2) {
-    return parts[0];
+  if (parts.length <= 2) return parts[0] || '';
+  const last = parts[parts.length - 1];
+  const second = parts[parts.length - 2];
+  if (last.length === 2 && second.length <= 3) {
+    return parts[parts.length - 3] || second;
   }
-  return parts[parts.length - 2];
+  return second;
 }
 
-function sendToastToActive(success, message, options) {
+function notifyUser(success, message, options, tab) {
+  if (options && options.toastEnabled === false) return;
+
+  const deliver = (tabId, tabUrl) => {
+    if (tabId && canInjectIntoTab(tabUrl)) {
+      browserAPI.tabs.sendMessage(tabId, {
+        type: 'SHOW_TOAST',
+        success,
+        message,
+        options: {
+          toastEnabled: true,
+          toastDurationMs: options?.toastDurationMs,
+          focusWaitMs: options?.focusWaitMs,
+        }
+      }, () => {
+        if (browserAPI.runtime.lastError) {
+          showBadgeFeedback(success, message);
+        }
+      });
+      return;
+    }
+    showBadgeFeedback(success, message);
+  };
+
+  if (tab?.id) {
+    deliver(tab.id, tab.url);
+    return;
+  }
   browserAPI.tabs.query({ active: true, currentWindow: true }, tabs => {
-    const activeId = tabs?.[0]?.id;
-    const activeUrl = tabs?.[0]?.url;
-    if (!activeId || !isHttpLike(activeUrl)) return;
-    browserAPI.tabs.sendMessage(activeId, {
-      type: 'SHOW_TOAST',
-      success,
-      message,
-      options: options ? {
-        toastEnabled: options.toastEnabled,
-        toastDurationMs: options.toastDurationMs,
-        focusWaitMs: options.focusWaitMs,
-      } : undefined
-    }, () => {
-      const err = browserAPI.runtime.lastError;
-      if (err) {
-        return;
-      }
-    });
+    deliver(tabs?.[0]?.id, tabs?.[0]?.url);
   });
+}
+
+function showBadgeFeedback(success, message) {
+  const color = success ? '#2d8a34' : '#c0392b';
+  try {
+    browserAPI.action.setBadgeText({ text: success ? 'OK' : '!' });
+    browserAPI.action.setBadgeBackgroundColor({ color });
+    browserAPI.action.setTitle({ title: message });
+  } catch (_) {
+    return;
+  }
+  if (badgeTimer) clearTimeout(badgeTimer);
+  badgeTimer = setTimeout(() => {
+    try {
+      browserAPI.action.setBadgeText({ text: '' });
+      browserAPI.action.setTitle({ title: tMsg('extensionName', 'Simple Image Converter') });
+    } catch (_) {}
+  }, 5000);
 }

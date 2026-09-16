@@ -1,10 +1,27 @@
 # Changelog
 
+## 1.3.3 (2026-09-01)
+- **Settings:** Saving output format from the options page now updates the context menu immediately
+- **Locales:** Updated batch feature tooltip strings (EN/DE/HU)
+- **Cleanup:** Removed export artifacts and internal documentation not needed in the public repository
+
+## 1.3.2 (2026-08-17)
+- **JPEG transparency**: Transparent pixels are composited onto a white background before JPEG export (PNG is unchanged)
+- **Protected pages**: No script injection on Chrome-internal pages or the Chrome Web Store; save still runs when the image URL is fetchable; copy falls back to the offscreen clipboard or a localized message
+- **Offscreen conversion**: The `offscreen` permission is now required so conversion no longer depends on injecting a canvas into the current tab
+- **Clipboard**: If the browser rejects `image/jpeg` on the clipboard, copy falls back to PNG
+- **Filenames**: Country-code domains such as `example.co.uk` now use the site name instead of `co`
+- **Settings reset**: Dark mode is stored explicitly on reset instead of being left undefined
+- **Cleanup**: Removed unused `web_accessible_resources`, dead offscreen `postMessage` handler, and mixed-language changelog text
+
+## 1.3.1
+- Fixed duplicate context menu items on reload
+- Included Vite chunk files in the release package
+
 ## 1.3.0 (2026-01-05)
 - **React Migration**: Complete migration to React for all UI components
   - Options page rebuilt with React
   - Popup rebuilt with React and tabbed interface (Home/Settings)
-  - Modern component-based architecture for easier maintenance and future development
 - **Quick Format Toggle**: New feature in popup home tab
   - Instantly switch between PNG and JPEG output format
   - Real-time context menu updates when format changes
@@ -16,8 +33,8 @@
   - Localized tab names (EN/DE/HU)
   - Professional color scheme replacing purple gradient
 - **Technical Improvements**:
-  - Vite build system for modern development workflow
-  - Better code organization and maintainability
+  - Vite build system
+  - Improved code organization
 
 ## 1.2.0
 - **Modern Settings UI**: Complete redesign of options page with iOS-style toggles, modern form elements, and dark mode support
@@ -45,7 +62,7 @@
 ## 1.1.0
 - Added "Copy Image as PNG" context menu; PNG copy now CORS-safe via offscreen conversion
 - Added localized toasts for copy success/error (en/de/hu)
-- Updated popup features, README-k, és manifest to reflect the new capability
+- Updated popup features, README files, and manifest to reflect the new capability
 - Clipboard permission (`clipboardWrite`) added; content script registered for copy handling
 
 ## 1.0.0
