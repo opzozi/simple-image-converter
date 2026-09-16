@@ -25,7 +25,7 @@ export default defineConfig({
         },
       },
     },
-    emptyOutDir: false,
+    emptyOutDir: true,
   },
   resolve: {
     alias: {

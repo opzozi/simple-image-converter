@@ -24,6 +24,8 @@ function findAndMoveHtml(dir, targetName) {
       let content = readFileSync(targetPath, 'utf-8');
       content = content.replace(/src="\//g, 'src="');
       content = content.replace(/href="\//g, 'href="');
+      // Chrome extensions reject Vite modulepreload for shared chunks (cross-world mismatch).
+      content = content.replace(/<link\s+rel="modulepreload"[^>]*>\s*/gi, '');
       writeFileSync(targetPath, content);
       return true;
     }
