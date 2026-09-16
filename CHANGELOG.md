@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.4 (2026-09-16)
+- **Dark mode default**: Popup and Options now both follow the system preference when no saved setting exists
+- **Inline images**: `data:` and `blob:` image URLs no longer leak into filenames; a clean `image-{date}-{time}` style name is used instead
+
 ## 1.3.3 (2026-09-01)
 - **Settings:** Saving output format from the options page now updates the context menu immediately
 - **Locales:** Updated batch feature tooltip strings (EN/DE/HU)

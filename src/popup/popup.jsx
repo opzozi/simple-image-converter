@@ -30,7 +30,7 @@ function PopupApp() {
 
   async function loadDarkMode() {
     const stored = await storage.get(['darkMode']);
-    const currentDarkMode = stored.darkMode !== undefined ? stored.darkMode : true;
+    const currentDarkMode = stored.darkMode !== undefined ? stored.darkMode : getSystemDarkMode();
     setDarkMode(currentDarkMode);
     applyDarkMode(currentDarkMode);
   }

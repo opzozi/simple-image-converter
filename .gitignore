@@ -6,7 +6,7 @@ dist/
 temp-release-*/
 exports/
 *.zip
-!release/*.zip
+!release/simple-image-converter-v*.zip
 *.crx
 *.pem
 .env
@@ -17,3 +17,14 @@ exports/
 # Local notes and status files
 PROJECT_STATUS.md
 LOCAL_NOTES.md
+
+# Internal / private docs
+docs/
+private/
+
+# PRO-only — never commit to the public free repository
+src/pro/
+PRO_LICENSE.md
+create-release-pro.ps1
+Copy-To-GoogleDrive.ps1
+release/simple-image-converter-pro-*.zip

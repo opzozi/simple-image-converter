@@ -535,41 +535,7 @@ async function setupOffscreenDocument() {
 
 function getFilenameFromUrl(imageUrl, pageUrl, fmt, pattern) {
   try {
-    const imageUrlObj = new URL(imageUrl);
-    const pathname = imageUrlObj.pathname;
-    const parts = pathname.split('/');
-    const rawName = parts[parts.length - 1] || 'image';
-    let base = rawName.split('?')[0];
-    base = base.replace(/\.[^.]+$/, '');
     const ext = fmt === 'jpeg' ? 'jpg' : 'png';
-
-    let siteUrl = '';
-    if (pageUrl && isHttpLike(pageUrl)) {
-      try {
-        const pageUrlObj = new URL(pageUrl);
-        if (pageUrlObj.hostname !== imageUrlObj.hostname || pageUrl !== imageUrl) {
-          siteUrl = pageUrl;
-        }
-      } catch (_) {
-        siteUrl = imageUrl;
-      }
-    }
-
-    if (!siteUrl) siteUrl = imageUrl;
-
-    const urlObj = new URL(siteUrl);
-    let hostname = urlObj.hostname || 'site';
-    hostname = hostname
-      .replace(/^www\./i, '')
-      .replace(/^m\./i, '')
-      .replace(/^cdn\./i, '')
-      .replace(/^static\./i, '')
-      .replace(/^media\./i, '')
-      .replace(/^img\./i, '')
-      .replace(/^images?\./i, '');
-
-    const siteShort = getBaseDomain(hostname);
-    const site = hostname;
     const now = new Date();
     const dateStr = [
       now.getFullYear(),
@@ -581,6 +547,65 @@ function getFilenameFromUrl(imageUrl, pageUrl, fmt, pattern) {
       String(now.getMinutes()).padStart(2, '0'),
       String(now.getSeconds()).padStart(2, '0')
     ].join('-');
+
+    const isInlineSource = typeof imageUrl === 'string' && (
+      imageUrl.startsWith('data:') || imageUrl.startsWith('blob:')
+    );
+
+    let base = 'image';
+    let site = 'site';
+    let siteShort = 'site';
+
+    if (!isInlineSource) {
+      const imageUrlObj = new URL(imageUrl);
+      const pathname = imageUrlObj.pathname;
+      const parts = pathname.split('/');
+      const rawName = parts[parts.length - 1] || 'image';
+      base = rawName.split('?')[0].replace(/\.[^.]+$/, '') || 'image';
+
+      let siteUrl = '';
+      if (pageUrl && isHttpLike(pageUrl)) {
+        try {
+          const pageUrlObj = new URL(pageUrl);
+          if (pageUrlObj.hostname !== imageUrlObj.hostname || pageUrl !== imageUrl) {
+            siteUrl = pageUrl;
+          }
+        } catch (_) {
+          siteUrl = imageUrl;
+        }
+      }
+      if (!siteUrl) siteUrl = imageUrl;
+
+      const urlObj = new URL(siteUrl);
+      let hostname = urlObj.hostname || 'site';
+      hostname = hostname
+        .replace(/^www\./i, '')
+        .replace(/^m\./i, '')
+        .replace(/^cdn\./i, '')
+        .replace(/^static\./i, '')
+        .replace(/^media\./i, '')
+        .replace(/^img\./i, '')
+        .replace(/^images?\./i, '');
+
+      siteShort = getBaseDomain(hostname) || hostname || 'site';
+      site = hostname || 'site';
+    } else if (pageUrl && isHttpLike(pageUrl)) {
+      try {
+        let hostname = new URL(pageUrl).hostname || 'site';
+        hostname = hostname
+          .replace(/^www\./i, '')
+          .replace(/^m\./i, '')
+          .replace(/^cdn\./i, '')
+          .replace(/^static\./i, '')
+          .replace(/^media\./i, '')
+          .replace(/^img\./i, '')
+          .replace(/^images?\./i, '');
+        siteShort = getBaseDomain(hostname) || hostname || 'site';
+        site = hostname || 'site';
+      } catch (_) {
+        // keep defaults
+      }
+    }
 
     const pat = typeof pattern === 'string' && pattern.trim()
       ? pattern
