@@ -2,7 +2,7 @@
 
 ## Overview
 
-Simple Image Converter is a lightweight Chrome extension that converts and saves images in various formats (WebP, AVIF, JPG, etc.) to PNG or JPEG format with a simple right-click. The extension operates 100% offline, ensuring complete privacy and no data collection.
+Simple Image Converter is a lightweight Chrome extension that converts and saves images in various formats (WebP, AVIF, JPG, etc.) to PNG or JPEG format with a simple right-click. Conversion is 100% offline and happens on your device. Fetching the image is a network request to the image URL. The extension does not collect personal data.
 
 ## Core Features
 
@@ -121,8 +121,8 @@ The extension uses intelligent filename generation that prioritizes the page URL
 
 ## Privacy & Security
 
-- **100% Offline**: All processing happens locally
-- **No Data Collection**: No analytics, tracking, or external requests
+- **100% Offline**: Conversion happens on your device. Fetching the image is a network request to the image URL.
+- **No Data Collection**: No analytics or tracking. Image download can send cookies to the image host when "Use credentials when fetching images" is on (the default).
 - **Minimal Permissions**: Only requests necessary permissions
 - **Open Source**: Code is transparent and auditable
 

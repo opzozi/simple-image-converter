@@ -40,7 +40,7 @@
     "description": "Feature 3"
   },
   "featurePrivacy": {
-    "message": "100% offline, keine Datenerfassung",
+    "message": "100% Offline-Konvertierung; der Bildabruf ist eine Netzwerkanfrage",
     "description": "Feature 4"
   },
   "copySuccessToast": {
@@ -192,7 +192,7 @@
     "description": "Compact donate button text"
   },
   "privacyBadge": {
-    "message": "100% offline • Keine Cloud • Deine Daten geschützt",
+    "message": "100% Offline-Konvertierung • Keine Cloud • Abruf geht an die Bild-URL",
     "description": "Privacy badge text"
   },
   "version": {

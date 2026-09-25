@@ -40,7 +40,7 @@
     "description": "Feature 3"
   },
   "featurePrivacy": {
-    "message": "100% offline, nincs adatgyűjtés",
+    "message": "100% offline konvertálás; a kép letöltése hálózati kérés",
     "description": "Feature 4"
   },
   "copySuccessToast": {
@@ -192,7 +192,7 @@
     "description": "Compact donate button text"
   },
   "privacyBadge": {
-    "message": "100% offline • Nincs felhő • Adataid védve",
+    "message": "100% offline konvertálás • Nincs felhő • A letöltés a kép címére megy",
     "description": "Privacy badge text"
   },
   "version": {
