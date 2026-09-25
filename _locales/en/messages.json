@@ -40,7 +40,7 @@
     "description": "Feature 3"
   },
   "featurePrivacy": {
-    "message": "100% offline, no data collection",
+    "message": "100% offline conversion; fetching the image is a network request",
     "description": "Feature 4"
   },
   "copySuccessToast": {
@@ -192,7 +192,7 @@
     "description": "Compact donate button text"
   },
   "privacyBadge": {
-    "message": "100% offline • No cloud • Your data protected",
+    "message": "100% offline conversion • No cloud • Fetch goes to the image URL",
     "description": "Privacy badge text"
   },
   "version": {

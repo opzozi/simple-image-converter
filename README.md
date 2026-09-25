@@ -13,7 +13,7 @@ A lightweight Chrome extension that converts and saves any image (WebP, AVIF, JP
 - **Smart Filenames** — Automatically uses website name (not CDN) in filenames
 - **Customizable Settings** — Modern UI with dark mode support
 - **Fast & Efficient** — Uses Offscreen API for optimal performance
-- **Privacy First** — 100% offline, no data collection
+- **Privacy First** — 100% offline conversion, no data collection. Fetching the image is a network request to its URL.
 - **Multi-language** — English, German, Hungarian
 - **Lightweight** — ~5-10 MB RAM usage
 

@@ -7,7 +7,7 @@ Chrome böngésző bővítmény, amely bármilyen weboldali képet PNG vagy JPEG
 - **Univerzális Konverzió** — WebP, AVIF, JPG és más formátumok PNG/JPEG formátumba alakítása
 - **Vágólapra másolás** — Jobb klikk → „Kép másolása PNG/JPEG-ként"
 - **Gyors és Hatékony** — Offscreen API használata optimális teljesítményért
-- **Biztonság Első** — 100% offline, nincs adatgyűjtés
+- **Biztonság Első** — A konvertálás 100% offline, nincs adatgyűjtés. A kép letöltése hálózati kérés a kép címére.
 - **Többnyelvű** — Angol, német és magyar nyelv támogatása
 - **Könnyű** — ~5-10 MB RAM használat
 
